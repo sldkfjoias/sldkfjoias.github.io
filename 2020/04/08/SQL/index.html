@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"sldkfjoias.github.io","root":"/","images":"/images","scheme":"Pisces","version":"8.3.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
+  </script>
+<meta name="description" content="SQL数据定义数据库中的关系集合必须由DDL指定给系统. DDL定义一组关系,同时还能定义每个关系的信息, 包括:  每个关系的模式 每个属性的取值类型 完整性约束 每个关系维护的索引集合 每个关系的安全性和权限信息 每个关系在瓷盘上的物理存储结构  例:create table department(    dept_name varchar(20),    building varchar(1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SQL">
+<meta property="og:url" content="https://sldkfjoias.github.io/2020/04/08/SQL/index.html">
+<meta property="og:site_name" content="YeeHHa">
+<meta property="og:description" content="SQL数据定义数据库中的关系集合必须由DDL指定给系统. DDL定义一组关系,同时还能定义每个关系的信息, 包括:  每个关系的模式 每个属性的取值类型 完整性约束 每个关系维护的索引集合 每个关系的安全性和权限信息 每个关系在瓷盘上的物理存储结构  例:create table department(    dept_name varchar(20),    building varchar(1">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-04-08T05:42:49.000Z">
+<meta property="article:modified_time" content="2021-04-08T09:00:34.967Z">
+<meta property="article:author" content="张石">
+<meta property="article:tag" content="DataBase">
+<meta property="article:tag" content="SQL">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://sldkfjoias.github.io/2020/04/08/SQL/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>SQL | YeeHHa</title>
+  
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">YeeHHa</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">让我们做点年轻人该做的事吧</p>
+      <img class="custom-logo-image" src="/uploads/custom-logo.jpg" alt="YeeHHa">
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#SQL%E6%95%B0%E6%8D%AE%E5%AE%9A%E4%B9%89"><span class="nav-number">1.</span> <span class="nav-text">SQL数据定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SQL%E6%9F%A5%E8%AF%A2%E5%9F%BA%E6%9C%AC%E7%BB%93%E6%9E%84"><span class="nav-number">2.</span> <span class="nav-text">SQL查询基本结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%95%E5%85%B3%E7%B3%BB%E6%9F%A5%E8%AF%A2"><span class="nav-number">2.1.</span> <span class="nav-text">单关系查询</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E5%85%B3%E7%B3%BB%E6%9F%A5%E8%AF%A2"><span class="nav-number">2.2.</span> <span class="nav-text">多关系查询</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E7%84%B6%E8%BF%9E%E6%8E%A5"><span class="nav-number">2.3.</span> <span class="nav-text">自然连接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%99%84%E5%8A%A0%E6%93%8D%E4%BD%9C"><span class="nav-number">2.4.</span> <span class="nav-text">附加操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9B%B4%E5%90%8D%E8%BF%90%E7%AE%97"><span class="nav-number">2.4.1.</span> <span class="nav-text">更名运算</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%93%8D%E4%BD%9C"><span class="nav-number">2.4.2.</span> <span class="nav-text">字符串操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8E%92%E5%88%97%E5%85%83%E7%BB%84%E7%9A%84%E6%98%BE%E7%A4%BA%E6%AC%A1%E5%BA%8F"><span class="nav-number">2.4.3.</span> <span class="nav-text">排列元组的显示次序</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A9%BA%E5%80%BC"><span class="nav-number">2.5.</span> <span class="nav-text">空值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%81%9A%E9%9B%86%E5%87%BD%E6%95%B0-group-by"><span class="nav-number">2.6.</span> <span class="nav-text">聚集函数(group by)</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">张石</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://sldkfjoias.github.io/2020/04/08/SQL/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="张石">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YeeHHa">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          SQL
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-04-08 13:42:49" itemprop="dateCreated datePublished" datetime="2020-04-08T13:42:49+08:00">2020-04-08</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-04-08 17:00:34" itemprop="dateModified" datetime="2021-04-08T17:00:34+08:00">2021-04-08</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="SQL数据定义"><a href="#SQL数据定义" class="headerlink" title="SQL数据定义"></a>SQL数据定义</h2><p>数据库中的关系集合必须由DDL指定给系统. DDL定义一组关系,同时还能定义每个关系的信息, 包括:</p>
+<ul>
+<li>每个关系的模式</li>
+<li>每个属性的取值类型</li>
+<li>完整性约束</li>
+<li>每个关系维护的索引集合</li>
+<li>每个关系的安全性和权限信息</li>
+<li>每个关系在瓷盘上的物理存储结构</li>
+</ul>
+<p>例:<br><strong>create table</strong> department<br>(<br>    dept_name <strong>varchar(20)</strong>,<br>    building <strong>varchar(15)</strong>,<br>    budget <strong>numeric(12, 2)</strong>,<br>    <strong>primary key</strong> (dept_name));</p>
+<p><strong>create table</strong> course<br>(<br>    course_id <strong>varchar(7)</strong>,<br>    title <strong>varchar(50)</strong>,<br>    dept_name <strong>varchar(20)</strong>,<br>    credits <strong>numeric(2, 0)</strong>,<br>    <strong>primary key</strong> (course_id),<br>    <strong>foreign key</strong> (dept_name) <strong>references</strong> department );</p>
+<p><strong>insert into</strong> instructor <strong>values</strong> (20211, ‘Smith’, ‘Biology’, 66000);</p>
+<p><strong>delete from</strong> student; //会删除student中的所有元组,但是会保留关系student</p>
+<p><strong>drop table</strong> student; //会删除掉关系student,在没有create之前无法再次添加元组</p>
+<p><strong>alter</strong> <strong>table</strong> r <strong>add</strong> A D; //在r中添加域为D的属性A  </p>
+<p><strong>alter table</strong> r <strong>drop</strong> A; //删除r中的属性A</p>
+<h2 id="SQL查询基本结构"><a href="#SQL查询基本结构" class="headerlink" title="SQL查询基本结构"></a>SQL查询基本结构</h2><h3 id="单关系查询"><a href="#单关系查询" class="headerlink" title="单关系查询"></a>单关系查询</h3><p><strong>select</strong> <strong>(distinct/all)</strong> name <strong>from</strong> instructor;  </p>
+<p><strong>select</strong> name<br><strong>from</strong> instructor<br><strong>where</strong> dept_name = ‘Comp.Sci’ <strong>and</strong> salary &gt; 70000 ;</p>
+<h3 id="多关系查询"><a href="#多关系查询" class="headerlink" title="多关系查询"></a>多关系查询</h3><p><strong>select</strong> name, instructor.dept_name, building<br><strong>from</strong> instructor, department<br><strong>where</strong> instrctor.dept_name = department.dept_name ;<br>其中from会生成几个关系的笛卡尔乘积,之后通过where所对应的谓词选择相应的元组，最后select选择出所需的属性。</p>
+<h3 id="自然连接"><a href="#自然连接" class="headerlink" title="自然连接"></a>自然连接</h3><p>例：<strong>select</strong> name, course_id <strong>from</strong> instructor <strong>natural</strong> <strong>join</strong> teaches;</p>
+<p>生成的结果首先会列出二者的共同属性,之后是只出现在第一个关系中的属性,最后是只出现在第二个关系中的属性。</p>
+<p>更为一般的<br><strong>select</strong> A, B, C, D…<br><strong>from</strong> r1 <strong>natural join</strong> r2 <strong>natural oin</strong> r3 …. <strong>natural join</strong> rm<br><strong>where</strong> P;</p>
+<p>同时, 为了发扬自然连接的优势, 并且能够避免不必要的相等属性所做出的限制, SQL提供了允许用户制定哪些列相等自然连接构造方式  </p>
+<p><strong>select</strong> name, title<br><strong>from</strong> (instructor <strong>natural join</strong> teaches ) <strong>join</strong> course <strong>using</strong> (course_id) ;<br>//instructor和teaches自然连接,之后与course建立连接,不过只要求course_id取值相同</p>
+<h3 id="附加操作"><a href="#附加操作" class="headerlink" title="附加操作"></a>附加操作</h3><h4 id="更名运算"><a href="#更名运算" class="headerlink" title="更名运算"></a>更名运算</h4><p><strong>select</strong> T.name, S.course_id<br><strong>from</strong> instructor <strong>as</strong> T, teaches <strong>as</strong> S<br><strong>where</strong> T.ID = S.ID ;</p>
+<p>重命名关系的另一个作用是为了适用于需要比较同一个关系中的元组的情况。例如，找出满足下面条件的所有教师的姓名，他们的工资至少比Biology系某一个教师的工资要高。<br><strong>select distinct</strong> T.name<br><strong>from</strong> instructor <strong>as</strong> T, instructor <strong>as</strong> S<br><strong>where</strong> T.salary &gt; S.salary <strong>and</strong> S.dept_name = ‘Biology’;<br>不能简单地使用instructor因为无法表明是拿一个instructor。</p>
+<h4 id="字符串操作"><a href="#字符串操作" class="headerlink" title="字符串操作"></a>字符串操作</h4><ul>
+<li>%可以适配任意字符串</li>
+<li>_可以适配任意一个字符</li>
+<li>通过‘\’作为转义字符, 可以表达原本的含义, 如 ‘\%’ ‘\_’ ‘\\‘  </li>
+</ul>
+<p>例:<br><strong>select</strong> dept_name<br><strong>from</strong> department<br><strong>where</strong> building <strong>like</strong> ‘%Watson%’ ;<br>可以选择出所有所在大楼名字中包含Waston的系名字</p>
+<h4 id="排列元组的显示次序"><a href="#排列元组的显示次序" class="headerlink" title="排列元组的显示次序"></a>排列元组的显示次序</h4><p><strong>select</strong> name<br><strong>from</strong> instructor<br><strong>where</strong> dept_name = ‘Physics’<br><strong>order by</strong> salary <strong>desc</strong>, name <strong>asc</strong>;<br><strong>desc</strong> 标识降序排列 <strong>asc</strong> 表示升序排列</p>
+<h3 id="空值"><a href="#空值" class="headerlink" title="空值"></a>空值</h3><p>涉及空值的任何运算, 比较的结果都是unknown(包括null = null)<br>SQL允许使用is unknown / is not unknown来测试表达式的结果是否为unknown</p>
+<ul>
+<li>and: true and unknown == unknown,<br>false and unknown == false,<br>unknown and unknown == unknown</li>
+<li>or: true or unknown == true,<br>false or unknown == unknown,<br>unknown or unknown == unknown</li>
+<li>not: not unknown == unknown</li>
+</ul>
+<p>{(‘A’, null) , (‘A’, null)} 中的两个(‘A’, null) 会被视为相同的元组,如果使用distinct 只会保留一个元组， 而all会将二者保留</p>
+<h3 id="聚集函数-group-by"><a href="#聚集函数-group-by" class="headerlink" title="聚集函数(group by)"></a>聚集函数(group by)</h3><ul>
+<li>min</li>
+<li>max</li>
+<li>count</li>
+<li>avg</li>
+<li>sum</li>
+</ul>
+<p>having子句会在聚集函数之后进行判断</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/DataBase/" rel="tag"># DataBase</a>
+              <a href="/tags/SQL/" rel="tag"># SQL</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/04/06/DB1/" rel="prev" title="数据库系统引言">
+                  <i class="fa fa-chevron-left"></i> 数据库系统引言
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/04/08/%E5%85%B3%E7%B3%BB%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="next" title="关系数据库">
+                  关系数据库 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">张石</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.1.0/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink.listen({
+        timeout : 1500,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://sldkfjoias.github.io/2020/04/08/SQL/',]
+      });
+      });
+  </script>
+
+</body>
+</html>

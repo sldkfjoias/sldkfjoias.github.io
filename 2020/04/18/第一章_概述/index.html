@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"sldkfjoias.github.io","root":"/","images":"/images","scheme":"Pisces","version":"8.3.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
+  </script>
+<meta name="description" content="概念、组成、功能、分类计算机网络：一个将分散的、具有独立功能的计算机系统。通过通信设备和线路连接起来，由功能完善的软件实现资源共享和信息传递的功能。计算机网络是互联、自治的集合。 功能：  数据通信 资源共享（软件、硬件、数据） 分布式系统 提高可靠性 负载均衡  组成：  硬件 软件 协议：规定了数据传输的规范  工作方式：  边缘部分：用户直接使用 核心部分：边缘部分服务  功能组成：  通信">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计算机网络概述">
+<meta property="og:url" content="https://sldkfjoias.github.io/2020/04/18/%E7%AC%AC%E4%B8%80%E7%AB%A0_%E6%A6%82%E8%BF%B0/index.html">
+<meta property="og:site_name" content="YeeHHa">
+<meta property="og:description" content="概念、组成、功能、分类计算机网络：一个将分散的、具有独立功能的计算机系统。通过通信设备和线路连接起来，由功能完善的软件实现资源共享和信息传递的功能。计算机网络是互联、自治的集合。 功能：  数据通信 资源共享（软件、硬件、数据） 分布式系统 提高可靠性 负载均衡  组成：  硬件 软件 协议：规定了数据传输的规范  工作方式：  边缘部分：用户直接使用 核心部分：边缘部分服务  功能组成：  通信">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-04-18T08:49:56.000Z">
+<meta property="article:modified_time" content="2021-04-08T08:53:38.553Z">
+<meta property="article:author" content="张石">
+<meta property="article:tag" content="计算机网络">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://sldkfjoias.github.io/2020/04/18/%E7%AC%AC%E4%B8%80%E7%AB%A0_%E6%A6%82%E8%BF%B0/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>计算机网络概述 | YeeHHa</title>
+  
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">YeeHHa</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">让我们做点年轻人该做的事吧</p>
+      <img class="custom-logo-image" src="/uploads/custom-logo.jpg" alt="YeeHHa">
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5%E3%80%81%E7%BB%84%E6%88%90%E3%80%81%E5%8A%9F%E8%83%BD%E3%80%81%E5%88%86%E7%B1%BB"><span class="nav-number">1.</span> <span class="nav-text">概念、组成、功能、分类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%88%86%E7%B1%BB"><span class="nav-number">2.</span> <span class="nav-text">计算机网络分类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%87%E5%87%86%E5%8C%96%E5%B7%A5%E4%BD%9C"><span class="nav-number">3.</span> <span class="nav-text">标准化工作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%9F%E7%8E%87%E3%80%81%E5%B8%A6%E5%AE%BD%E3%80%81%E5%90%9E%E5%90%90%E9%87%8F"><span class="nav-number">4.</span> <span class="nav-text">速率、带宽、吞吐量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9F%E7%8E%87"><span class="nav-number">4.1.</span> <span class="nav-text">速率</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%A6%E5%AE%BD"><span class="nav-number">4.2.</span> <span class="nav-text">带宽</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%9E%E5%90%90%E9%87%8F"><span class="nav-number">4.3.</span> <span class="nav-text">吞吐量</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">张石</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://sldkfjoias.github.io/2020/04/18/%E7%AC%AC%E4%B8%80%E7%AB%A0_%E6%A6%82%E8%BF%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="张石">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YeeHHa">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          计算机网络概述
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-04-18 16:49:56" itemprop="dateCreated datePublished" datetime="2020-04-18T16:49:56+08:00">2020-04-18</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-04-08 16:53:38" itemprop="dateModified" datetime="2021-04-08T16:53:38+08:00">2021-04-08</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="概念、组成、功能、分类"><a href="#概念、组成、功能、分类" class="headerlink" title="概念、组成、功能、分类"></a>概念、组成、功能、分类</h2><p>计算机网络：一个将分散的、具有独立功能的计算机系统。通过通信设备和线路连接起来，由功能完善的软件实现<em>资源共享</em>和<em>信息传递</em>的功能。<br>计算机网络是互联、自治的集合。</p>
+<p>功能：</p>
+<ul>
+<li>数据通信</li>
+<li>资源共享（软件、硬件、数据）</li>
+<li>分布式系统</li>
+<li>提高可靠性</li>
+<li>负载均衡</li>
+</ul>
+<p>组成：</p>
+<ul>
+<li>硬件</li>
+<li>软件</li>
+<li>协议：规定了数据传输的规范</li>
+</ul>
+<p>工作方式：</p>
+<ul>
+<li>边缘部分：用户直接使用</li>
+<li>核心部分：边缘部分服务</li>
+</ul>
+<p>功能组成：</p>
+<ul>
+<li>通信子网：实现数据通信。是各种通信介质、通信设备、相应的网络协议组成。</li>
+<li>资源子网：实现资源共享/数据处理。是实现资源共享功能的设备和软件的集合</li>
+</ul>
+<p>资源子网：应用层  表示层  会话层<br>通信子网：网络层  链路层  物理层</p>
+<h2 id="计算机网络分类"><a href="#计算机网络分类" class="headerlink" title="计算机网络分类"></a>计算机网络分类</h2><ol>
+<li><p>按分布范围分：</p>
+<ul>
+<li>广域网（交换技术）</li>
+<li>城域网</li>
+<li>局域网（广播技术）</li>
+<li>个人区域网</li>
+</ul>
+</li>
+<li><p>按使用者分：</p>
+<ul>
+<li>公用网络</li>
+<li>专用网络</li>
+</ul>
+</li>
+<li><p>按交换技术分：</p>
+<ul>
+<li>电路交换</li>
+<li>报文交换</li>
+<li>分组交换</li>
+</ul>
+</li>
+<li><p>按拓扑结构分：</p>
+<ul>
+<li>总线型</li>
+<li>星型</li>
+<li>环形</li>
+<li>网状型</li>
+</ul>
+</li>
+<li><p>按传输技术分：</p>
+<ul>
+<li>广播式网络：共享公共通信信道</li>
+<li>点对点网络：分组存储转发、路由选择机制</li>
+</ul>
+</li>
+</ol>
+<h2 id="标准化工作"><a href="#标准化工作" class="headerlink" title="标准化工作"></a>标准化工作</h2><p>标准分类：</p>
+<ul>
+<li>法定标准：OSI</li>
+<li>事实标准：TCP/IP</li>
+</ul>
+<p>制定标准流程：RFC（Request For Comments）</p>
+<ul>
+<li>因特网草案：此阶段还不是RFC文档</li>
+<li>建议标准：开始成为RFC文档</li>
+<li>草案标准：已取消该阶段</li>
+<li>因特网标准</li>
+</ul>
+<p>国际标准化组织ISO： OSI参考模型、HDLC协议<br>国际电信联盟ITU：制定电气通信规则<br>IEEE：学术机构、IEEE802标准<br>IETF：RFC</p>
+<h2 id="速率、带宽、吞吐量"><a href="#速率、带宽、吞吐量" class="headerlink" title="速率、带宽、吞吐量"></a>速率、带宽、吞吐量</h2><h3 id="速率"><a href="#速率" class="headerlink" title="速率"></a>速率</h3><p>速率：数据率或称数据传输率或比特率。<br>连接在计算机网络上的主机在数字信道上传送数据的<strong>位数的速率</strong>。<br>单位：b/s kb/s Mb/s Gb/s Tb/s $10^3$进制<br><strong>1 Byte = 8 bit</strong></p>
+<h3 id="带宽"><a href="#带宽" class="headerlink" title="带宽"></a>带宽</h3><p>带宽原指某个信号具有的频带宽度，即最高频率与最低频率之差，单位是赫兹（Hz）。<br>计算机网络中，带宽表示网络的通信线路传送数据的能力，通常是单位时间内从网络中某一点到另一点所能通过的<strong>最高数据率</strong>，单位是“比特每秒”</p>
+<h3 id="吞吐量"><a href="#吞吐量" class="headerlink" title="吞吐量"></a>吞吐量</h3>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" rel="tag"># 计算机网络</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/04/09/SQL2/" rel="prev" title="SQL">
+                  <i class="fa fa-chevron-left"></i> SQL
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/04/18/tcpip%E5%9B%9B%E5%B1%82/" rel="next" title="TCP/IP参考模型">
+                  TCP/IP参考模型 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">张石</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.1.0/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink.listen({
+        timeout : 1500,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://sldkfjoias.github.io/2020/04/18/%E7%AC%AC%E4%B8%80%E7%AB%A0_%E6%A6%82%E8%BF%B0/',]
+      });
+      });
+  </script>
+
+</body>
+</html>

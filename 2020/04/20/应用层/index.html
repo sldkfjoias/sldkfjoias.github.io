@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"sldkfjoias.github.io","root":"/","images":"/images","scheme":"Pisces","version":"8.3.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
+  </script>
+<meta name="description" content="应用层应用层选择传输层考虑的问题 可靠数据传输：因为分组可能会在网络中失序，出错，丢失。有些应用不允许这种问题出现，所以需要提供可靠数据传输保证。一些不在意的程序，如：视频、音频，等能够承受小差错的称为容忍丢失的应用。 吞吐量：运输层协议应该能够提供吞吐量保证，保证能够r比特&#x2F;秒的确保吞吐量。例如因特网电话要对语言以32kbps的速率进行编码，如果运输层协议不能以该吞吐量传输，那么得到的那些几乎没">
+<meta property="og:type" content="article">
+<meta property="og:title" content="应用层">
+<meta property="og:url" content="https://sldkfjoias.github.io/2020/04/20/%E5%BA%94%E7%94%A8%E5%B1%82/index.html">
+<meta property="og:site_name" content="YeeHHa">
+<meta property="og:description" content="应用层应用层选择传输层考虑的问题 可靠数据传输：因为分组可能会在网络中失序，出错，丢失。有些应用不允许这种问题出现，所以需要提供可靠数据传输保证。一些不在意的程序，如：视频、音频，等能够承受小差错的称为容忍丢失的应用。 吞吐量：运输层协议应该能够提供吞吐量保证，保证能够r比特&#x2F;秒的确保吞吐量。例如因特网电话要对语言以32kbps的速率进行编码，如果运输层协议不能以该吞吐量传输，那么得到的那些几乎没">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-04-19T16:11:01.000Z">
+<meta property="article:modified_time" content="2021-04-08T09:01:57.330Z">
+<meta property="article:author" content="张石">
+<meta property="article:tag" content="计算机网络">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://sldkfjoias.github.io/2020/04/20/%E5%BA%94%E7%94%A8%E5%B1%82/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>应用层 | YeeHHa</title>
+  
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">YeeHHa</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">让我们做点年轻人该做的事吧</p>
+      <img class="custom-logo-image" src="/uploads/custom-logo.jpg" alt="YeeHHa">
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E5%B1%82"><span class="nav-number">1.</span> <span class="nav-text">应用层</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E5%B1%82%E9%80%89%E6%8B%A9%E4%BC%A0%E8%BE%93%E5%B1%82%E8%80%83%E8%99%91%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">1.1.</span> <span class="nav-text">应用层选择传输层考虑的问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HTTP"><span class="nav-number">1.2.</span> <span class="nav-text">HTTP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%81%E7%BB%AD%E8%BF%9E%E6%8E%A5%E5%92%8C%E9%9D%9E%E6%8C%81%E7%BB%AD%E8%BF%9E%E6%8E%A5"><span class="nav-number">1.2.1.</span> <span class="nav-text">持续连接和非持续连接</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">张石</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://sldkfjoias.github.io/2020/04/20/%E5%BA%94%E7%94%A8%E5%B1%82/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="张石">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YeeHHa">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          应用层
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-04-20 00:11:01" itemprop="dateCreated datePublished" datetime="2020-04-20T00:11:01+08:00">2020-04-20</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-04-08 17:01:57" itemprop="dateModified" datetime="2021-04-08T17:01:57+08:00">2021-04-08</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="应用层"><a href="#应用层" class="headerlink" title="应用层"></a>应用层</h1><h2 id="应用层选择传输层考虑的问题"><a href="#应用层选择传输层考虑的问题" class="headerlink" title="应用层选择传输层考虑的问题"></a>应用层选择传输层考虑的问题</h2><ul>
+<li>可靠数据传输：因为分组可能会在网络中失序，出错，丢失。有些应用不允许这种问题出现，所以需要提供可靠数据传输保证。一些不在意的程序，如：视频、音频，等能够承受小差错的称为<strong>容忍丢失的应用</strong>。</li>
+<li>吞吐量：运输层协议应该能够提供吞吐量保证，保证能够r比特/秒的确保吞吐量。例如因特网电话要对语言以32kbps的速率进行编码，如果运输层协议不能以该吞吐量传输，那么得到的那些几乎没有作用，因为无法在接收端复原，这类应用被称为<strong>宽带敏感应用</strong>，而不要求的如电子邮件、文件传输、HTTP等称为<strong>弹性应用</strong>。</li>
+<li>定时：运输层协议也能提供定时保证。这里指的是延迟，比如电话会议、视频、虚拟环境、游戏都要求数据交付有严格的时间限制。</li>
+<li>安全性：运输层协议能够为应用程序提供一种或多种安全性服务。</li>
+</ul>
+<blockquote>
+<p>TCP UDP都没有提供任何的加密机制，这就是说发送进程传输到套接字的数据，与经网络传送到目的进程的数据相同。这可能会导致许多安全问题出现。</p>
+</blockquote>
+<p>如今因特网研究了TCP的加强版本，称为<strong>安全套接字层（Secure Socket Layer, SSL）</strong>。用SSL加强后，不仅能做到TCP所能做到的一切，而且提供了关键的进程到进程的安全性服务，包括加密、数据完整性和端点鉴别。SSL的修改版本称为运输层安全性（Transport Layer Security, TLS）</p>
+<ul>
+<li>SSL<strong>不是</strong>与TCP和UDP在同一层次上的第三种运输协议，而是TCP的加强，这种强化是在应用层上实现的。应用程序若想使用SSL的服务，则它需要在该应用程序的客户端和服务端包括SSL代码。SSL有他自己的套接字API，这类似于传统的TCP套接字API。当一个进程使用SSL时，发送进程向SSL套接字传递明文数据。</li>
+</ul>
+<p>SSL在TCP和应用程序之间添加了一个SSL子层，通过SSL套接字与应用程序通信，通过TCP套接字与TCP通信。如果URL以https开始，则说明正在使用SSL。</p>
+<h2 id="HTTP"><a href="#HTTP" class="headerlink" title="HTTP"></a>HTTP</h2><p>HTTP TCP 端口号 80</p>
+<h3 id="持续连接和非持续连接"><a href="#持续连接和非持续连接" class="headerlink" title="持续连接和非持续连接"></a>持续连接和非持续连接</h3><p>因为HTTP使用TCP进行传输，所以必须决定，同一用户对同一服务器所发出的请求，是使用同一TCP连接进行数据传输，还是每个请求使用一条TCP连接。</p>
+<ul>
+<li>非持续连接：同一用户对同一服务器所发出的请求，每次请求使用一次TCP连接进行数据传输</li>
+<li>持续连接：同一用户对同一服务器所发出的请求，是使用同一TCP连接进行数据传输</li>
+</ul>
+<p>HTTP默认是持续连接，流水线工作方式。</p>
+<ul>
+<li>流水线工作方式：不需要之前的发送确认返回，就可以进行下一次传输</li>
+<li>非流水线工作方式：必须在之前的发送返回确认之后，才可以开始下一次传输</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" rel="tag"># 计算机网络</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/04/19/%E4%BF%A1%E6%81%AF%E7%86%B5/" rel="prev" title="信息熵">
+                  <i class="fa fa-chevron-left"></i> 信息熵
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/04/20/%E6%9F%A5%E8%AF%A2%E5%A4%84%E7%90%86%E5%92%8C%E6%9F%A5%E8%AF%A2%E4%BC%98%E5%8C%96/" rel="next" title="查询处理和查询优化">
+                  查询处理和查询优化 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">张石</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.1.0/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink.listen({
+        timeout : 1500,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://sldkfjoias.github.io/2020/04/20/%E5%BA%94%E7%94%A8%E5%B1%82/',]
+      });
+      });
+  </script>
+
+</body>
+</html>

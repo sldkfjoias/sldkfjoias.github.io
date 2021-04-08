@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"sldkfjoias.github.io","root":"/","images":"/images","scheme":"Pisces","version":"8.3.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
+  </script>
+<meta name="description" content="引言数据库系统（DBS）是一个相互关联的数据和一组用以访问这些数据的程序集合。 数据的集合成为数据库（DB） 数据库的目标在数据库系统出现之前,通常由文件处理系统来组织信息。文件处理系统存在着以下问题：  数据的冗余和不一致：相同信息重复存储；同一数据和其副本不一致 数据访问困难：检索困难 数据孤立：数据分散在不同的、格式不同的文件中 完整性问题：DBS必须满足一些一致性约束。 原子性问题：难以保">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数据库系统引言">
+<meta property="og:url" content="https://sldkfjoias.github.io/2020/04/06/DB1/index.html">
+<meta property="og:site_name" content="YeeHHa">
+<meta property="og:description" content="引言数据库系统（DBS）是一个相互关联的数据和一组用以访问这些数据的程序集合。 数据的集合成为数据库（DB） 数据库的目标在数据库系统出现之前,通常由文件处理系统来组织信息。文件处理系统存在着以下问题：  数据的冗余和不一致：相同信息重复存储；同一数据和其副本不一致 数据访问困难：检索困难 数据孤立：数据分散在不同的、格式不同的文件中 完整性问题：DBS必须满足一些一致性约束。 原子性问题：难以保">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-04-06T08:43:00.000Z">
+<meta property="article:modified_time" content="2021-04-08T09:01:06.647Z">
+<meta property="article:author" content="张石">
+<meta property="article:tag" content="DataBase">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://sldkfjoias.github.io/2020/04/06/DB1/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>数据库系统引言 | YeeHHa</title>
+  
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">YeeHHa</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">让我们做点年轻人该做的事吧</p>
+      <img class="custom-logo-image" src="/uploads/custom-logo.jpg" alt="YeeHHa">
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%95%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">引言</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E7%9B%AE%E6%A0%87"><span class="nav-number">1.1.</span> <span class="nav-text">数据库的目标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E8%A7%86%E5%9B%BE"><span class="nav-number">1.2.</span> <span class="nav-text">数据视图</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%8A%BD%E8%B1%A1"><span class="nav-number">1.2.1.</span> <span class="nav-text">数据抽象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E4%BE%8B%E5%92%8C%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.2.2.</span> <span class="nav-text">实例和模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.2.3.</span> <span class="nav-text">数据模型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AF%AD%E8%A8%80"><span class="nav-number">1.3.</span> <span class="nav-text">数据库语言</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%93%8D%E7%BA%B5%E8%AF%AD%E8%A8%80%EF%BC%88Data-Manipulation-Language%EF%BC%8CDML%EF%BC%89"><span class="nav-number">1.3.1.</span> <span class="nav-text">数据操纵语言（Data Manipulation Language，DML）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%AE%9A%E4%B9%89%E8%AF%AD%E8%A8%80%EF%BC%88Data-Definition-Language%EF%BC%8C-DDL%EF%BC%89"><span class="nav-number">1.3.2.</span> <span class="nav-text">数据定义语言（Data Definition Language， DDL）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E7%B3%BB%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-number">1.4.</span> <span class="nav-text">关系数据库</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A1%A8"><span class="nav-number">1.4.1.</span> <span class="nav-text">表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%93%8D%E7%BA%B5%E8%AF%AD%E8%A8%80"><span class="nav-number">1.4.2.</span> <span class="nav-text">数据操纵语言</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">张石</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://sldkfjoias.github.io/2020/04/06/DB1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="张石">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YeeHHa">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          数据库系统引言
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-04-06 16:43:00" itemprop="dateCreated datePublished" datetime="2020-04-06T16:43:00+08:00">2020-04-06</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-04-08 17:01:06" itemprop="dateModified" datetime="2021-04-08T17:01:06+08:00">2021-04-08</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h1><p>数据库系统（DBS）是一个相互关联的数据和一组用以访问这些数据的程序集合。</p>
+<p>数据的集合成为数据库（DB）</p>
+<h2 id="数据库的目标"><a href="#数据库的目标" class="headerlink" title="数据库的目标"></a>数据库的目标</h2><p>在数据库系统出现之前,通常由文件处理系统来组织信息。文件处理系统存在着以下问题：</p>
+<ul>
+<li>数据的冗余和不一致：相同信息重复存储；同一数据和其副本不一致</li>
+<li>数据访问困难：检索困难</li>
+<li>数据孤立：数据分散在不同的、格式不同的文件中</li>
+<li>完整性问题：DBS必须满足一些一致性约束。</li>
+<li>原子性问题：难以保证原子性</li>
+<li>并发访问控制：并发的更新操作导致数据的不一致</li>
+<li>安全性问题：权限管理困难</li>
+</ul>
+<h2 id="数据视图"><a href="#数据视图" class="headerlink" title="数据视图"></a>数据视图</h2><h3 id="数据抽象"><a href="#数据抽象" class="headerlink" title="数据抽象"></a>数据抽象</h3><p>开发人员通过以下几个层次的抽象，来对用户屏蔽复杂性，用以简化系统和用户的交互：</p>
+<ul>
+<li>物理层：底层，数据存储方式</li>
+<li>逻辑层：数据库中存储什么数据以及这些数据之间的关系。通过少量相对简单的结构描述了整个数据库。数据库管理员使用抽象的逻辑层，确定数据库中保存哪些信息。</li>
+<li>视图层：最高层次的抽象，方便用户和系统交互。</li>
+</ul>
+<h3 id="实例和模式"><a href="#实例和模式" class="headerlink" title="实例和模式"></a>实例和模式</h3><p>特定时刻存储在数据库中信息的集合称作数据库的一个<strong>实例</strong>。数据库的总体设计称作数据库<strong>模式</strong></p>
+<ul>
+<li>物理模式：在物理层描述数据库的设计</li>
+<li>逻辑模式：在逻辑层描述数据库的设计</li>
+<li>数据库在视图层可以有几种模式，称作子模式，描述了数据库的不同视图。</li>
+</ul>
+<p>程序员使用逻辑模式来构造数据库应用程序，物理模式隐藏在逻辑模式下，与具体程序相互独立。如果应用程序不依赖物理模式，则称为物理数据独立性。</p>
+<h3 id="数据模型"><a href="#数据模型" class="headerlink" title="数据模型"></a>数据模型</h3><p>数据库结构的基础是<strong>数据模型</strong>数据模型是一个描述数据、数据联系、数据语义以及一致性约束的概念的工具的集合。<br>数据模型：</p>
+<ul>
+<li>关系模型：用表的集合来表述数据和数据间的联系。</li>
+<li>实体关系模型：ER模型，现实世界由一组称作实体的基本对象和这些对象间的联系构成。</li>
+<li>基于对象的数据模型：可看作是ER模型增加了封装、方法（函数）和对象表示等概念后的扩展。</li>
+<li>半结构化数据模型：允许相同类型的数据项，含有不同属性集的数据定义。XML被广泛的用来表示半结构化的数据。</li>
+</ul>
+<h2 id="数据库语言"><a href="#数据库语言" class="headerlink" title="数据库语言"></a>数据库语言</h2><h3 id="数据操纵语言（Data-Manipulation-Language，DML）"><a href="#数据操纵语言（Data-Manipulation-Language，DML）" class="headerlink" title="数据操纵语言（Data Manipulation Language，DML）"></a>数据操纵语言（Data Manipulation Language，DML）</h3><p>用于增删改查数据的一种语言。<br>通常有以下两种类型：</p>
+<ul>
+<li>过程化DML：要求用户指定所需数据以及如何获得这些数据</li>
+<li>声明式DML：用户只需指定需求什么数据，不指明如何获得这些数据。</li>
+</ul>
+<h3 id="数据定义语言（Data-Definition-Language，-DDL）"><a href="#数据定义语言（Data-Definition-Language，-DDL）" class="headerlink" title="数据定义语言（Data Definition Language， DDL）"></a>数据定义语言（Data Definition Language， DDL）</h3><p>数据库模式的定义通过DDL来表达。数据库的存储结构和访问方式通过DDL来说明。<br>存储在数据库中的数据必须满足一些一致性约束：</p>
+<ul>
+<li>域约束：声明一种属性属于某种具体的域，数据必须符合它的域（如：整数、字符、日期）。</li>
+<li>参照完整性：一个关系中给定属性集上的取值在另一属性集中出现。</li>
+<li>断言：数据库需要时刻满足的某一条件。（例如，一个学生一学期只能选5门课），断言创建以后，系统会检测断言有效性，只有不破坏断言的数据库更新才会被允许。</li>
+<li>授权：不同的用户给予不同的权限，如读权限，插入权限（不可修改），更新权限，删除权限。</li>
+</ul>
+<p>DDL以一些指令作为输入，产生一些<strong>元数据</strong>作为输出。元数据是数据的数据，包含在数据字典中。在用户读和修改数据之前，会先参考数据字典。</p>
+<h2 id="关系数据库"><a href="#关系数据库" class="headerlink" title="关系数据库"></a>关系数据库</h2><h3 id="表"><a href="#表" class="headerlink" title="表"></a>表</h3><p>表的列对应记录类型的属性</p>
+<h3 id="数据操纵语言"><a href="#数据操纵语言" class="headerlink" title="数据操纵语言"></a>数据操纵语言</h3><p>SQL查询语言是非过程化的,可以以几个表作为输入,总是仅返回一个表。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/DataBase/" rel="tag"># DataBase</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/04/08/SQL/" rel="next" title="SQL">
+                  SQL <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">张石</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.1.0/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink.listen({
+        timeout : 1500,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://sldkfjoias.github.io/2020/04/06/DB1/',]
+      });
+      });
+  </script>
+
+</body>
+</html>
