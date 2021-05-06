@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"sldkfjoias.github.io","root":"/","images":"/images","scheme":"Pisces","version":"8.3.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
+  </script>
+<meta name="description" content="这是自己做一些东西时候涉及到的知识，很乱，就当自己的笔记用的东西，不过大部分应该都没什么问题。  Zygotezygote是安卓运行的第一个进程，由Linux的init通过fork创建。DVM、SystemServer进程以及所有应用程序进程都是Zygotefork出来的。 Zygote启动文件  framework&#x2F;cmds&#x2F;app_process&#x2F;app_main.cpp  System Se">
+<meta property="og:type" content="article">
+<meta property="og:title" content="有关Android一些笔记">
+<meta property="og:url" content="https://sldkfjoias.github.io/2021/05/06/Android%E4%B8%80%E4%BA%9B%E4%B8%9C%E8%A5%BF/index.html">
+<meta property="og:site_name" content="YeeHHa">
+<meta property="og:description" content="这是自己做一些东西时候涉及到的知识，很乱，就当自己的笔记用的东西，不过大部分应该都没什么问题。  Zygotezygote是安卓运行的第一个进程，由Linux的init通过fork创建。DVM、SystemServer进程以及所有应用程序进程都是Zygotefork出来的。 Zygote启动文件  framework&#x2F;cmds&#x2F;app_process&#x2F;app_main.cpp  System Se">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-05-06T09:01:15.000Z">
+<meta property="article:modified_time" content="2021-05-06T13:38:28.753Z">
+<meta property="article:author" content="张石">
+<meta property="article:tag" content="闲杂笔记">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://sldkfjoias.github.io/2021/05/06/Android%E4%B8%80%E4%BA%9B%E4%B8%9C%E8%A5%BF/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>有关Android一些笔记 | YeeHHa</title>
+  
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">YeeHHa</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">让我们做点年轻人该做的事吧</p>
+      <img class="custom-logo-image" src="/uploads/custom-logo.jpg" alt="YeeHHa">
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Zygote"><span class="nav-number">1.</span> <span class="nav-text">Zygote</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#System-Server"><span class="nav-number">2.</span> <span class="nav-text">System Server</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#App-Launcher"><span class="nav-number">3.</span> <span class="nav-text">App Launcher</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8App%E6%97%B6%E6%B5%81%E7%A8%8B%EF%BC%9A"><span class="nav-number">4.</span> <span class="nav-text">启动App时流程：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#runOnce%E6%96%B9%E6%B3%95%E6%89%A7%E8%A1%8C%E7%9A%84%E8%BF%87%E7%A8%8B"><span class="nav-number">5.</span> <span class="nav-text">runOnce方法执行的过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ForkCommon"><span class="nav-number">6.</span> <span class="nav-text">ForkCommon</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SpecializeCommon"><span class="nav-number">7.</span> <span class="nav-text">SpecializeCommon</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">张石</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://sldkfjoias.github.io/2021/05/06/Android%E4%B8%80%E4%BA%9B%E4%B8%9C%E8%A5%BF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="张石">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YeeHHa">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          有关Android一些笔记
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-05-06 17:01:15 / 修改时间：21:38:28" itemprop="dateCreated datePublished" datetime="2021-05-06T17:01:15+08:00">2021-05-06</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>这是自己做一些东西时候涉及到的知识，很乱，就当自己的笔记用的东西，不过大部分应该都没什么问题。</p>
+<hr>
+<h2 id="Zygote"><a href="#Zygote" class="headerlink" title="Zygote"></a>Zygote</h2><p>zygote是安卓运行的第一个进程，由Linux的<code>init</code>通过<code>fork</code>创建。DVM、<code>SystemServer</code>进程以及<strong>所有</strong>应用程序进程都是Zygote<code>fork</code>出来的。</p>
+<p>Zygote启动文件</p>
+<blockquote>
+<p>framework/cmds/app_process/app_main.cpp</p>
+</blockquote>
+<h2 id="System-Server"><a href="#System-Server" class="headerlink" title="System Server"></a>System Server</h2><p>System Server是Zygote<code>fork</code>的第一个进程，其负责启动和管理整个Java framework，包括<code>ActivityManager</code>,<code>WindowManager</code>,<code>PackageManager</code>,<code>PowerManager</code>等服务。</p>
+<h2 id="App-Launcher"><a href="#App-Launcher" class="headerlink" title="App Launcher"></a>App Launcher</h2><p>App Launcher是Zygote<code>fork</code>出来的第一个App进程，也就是用户看到的桌面App。</p>
+<p>上面是可能涉及的相关东西</p>
+<hr>
+<h2 id="启动App时流程："><a href="#启动App时流程：" class="headerlink" title="启动App时流程："></a>启动App时流程：</h2><ol>
+<li>App发起进程：从桌面启动app，发起进程便是Launcher所在进程；当从某App内启动远程进程，则发送进程便是该App所在进程。发起进程先通过binder发送消息给system_server进程</li>
+<li>System_server进程：调用Process.start()方法，通过socket向zygote进程发送创建新进程的请求；</li>
+<li><strong>Zygote进程</strong>：在<code>ZygoteInit</code>之后便进入<code>runSelectLoop()</code>循环体内，每当有客户端连接便执行<code>ZygoteConnection.runOnce()</code>方法，再经过层层调用后<code>fork()</code>出新的应用进程。</li>
+<li>新进程，到这就无所谓不关键了。</li>
+</ol>
+<p><em>这么看来重点就是看zygote怎么fork了</em></p>
+<p><strong>进程：</strong> 每个APP在启动前必须创建一个进程，该进程由<code>Zygote</code>通过<code>fork</code>创建出来，这是安卓的一个资源与分配过程，可以加快打开app的速度。这样，应用程序进程会获得Zygote进程在启动时创建的虚拟机实例。</p>
+<hr>
+<h2 id="runOnce方法执行的过程"><a href="#runOnce方法执行的过程" class="headerlink" title="runOnce方法执行的过程"></a>runOnce方法执行的过程</h2><p>创建出来的进程因为是fork的zygote，所以其权限复制了zygote的root权限，这显然不符合逻辑，所以需要进行权限设定，权限设定通过forkAndSpecialize完成。</p>
+<p>runOnce -&gt; forkAndSpecialize -&gt; nativeForkAndSpecialize</p>
+<blockquote>
+<p>nativeForkAndSpecialize在<code>frameworks/base/core/jni/com_android_internal_os_Zygote.cpp</code>中</p>
+</blockquote>
+<p>com_android_internal_os_Zygote_nagiveForkAndSpecialize<br>之后执行了zygote::FOrkCommom，返回pid之后对fork的子进程执行<code>SpecializeCommon</code>在这个函数中，对</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> jint <span class="title">com_android_internal_os_Zygote_nativeForkAndSpecialize</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">        JNIEnv* env, jclass, jint uid, jint gid, jintArray gids, jint runtime_flags,</span></span></span><br><span class="line"><span class="function"><span class="params">        jobjectArray rlimits, jint mount_external, jstring se_info, jstring nice_name,</span></span></span><br><span class="line"><span class="function"><span class="params">        jintArray managed_fds_to_close, jintArray managed_fds_to_ignore, jboolean is_child_zygote,</span></span></span><br><span class="line"><span class="function"><span class="params">        jstring instruction_set, jstring app_data_dir, jboolean is_top_app,</span></span></span><br><span class="line"><span class="function"><span class="params">        jobjectArray pkg_data_info_list, jobjectArray allowlisted_data_info_list,</span></span></span><br><span class="line"><span class="function"><span class="params">        jboolean mount_data_dirs, jboolean mount_storage_dirs)</span> </span>&#123;</span><br><span class="line">    jlong capabilities = <span class="built_in">CalculateCapabilities</span>(env, uid, gid, gids, is_child_zygote);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">UNLIKELY</span>(managed_fds_to_close == <span class="literal">nullptr</span>)) &#123;</span><br><span class="line">      zygote::<span class="built_in">ZygoteFailure</span>(env, <span class="string">&quot;zygote&quot;</span>, nice_name,</span><br><span class="line">                            <span class="string">&quot;Zygote received a null fds_to_close vector.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    std::vector&lt;<span class="keyword">int</span>&gt; fds_to_close =</span><br><span class="line">        <span class="built_in">ExtractJIntArray</span>(env, <span class="string">&quot;zygote&quot;</span>, nice_name, managed_fds_to_close).<span class="built_in">value</span>();</span><br><span class="line">    std::vector&lt;<span class="keyword">int</span>&gt; fds_to_ignore =</span><br><span class="line">        <span class="built_in">ExtractJIntArray</span>(env, <span class="string">&quot;zygote&quot;</span>, nice_name, managed_fds_to_ignore)</span><br><span class="line">            .<span class="built_in">value_or</span>(std::vector&lt;<span class="keyword">int</span>&gt;());</span><br><span class="line"></span><br><span class="line">    std::vector&lt;<span class="keyword">int</span>&gt; usap_pipes = <span class="built_in">MakeUsapPipeReadFDVector</span>();</span><br><span class="line"></span><br><span class="line">    fds_to_close.<span class="built_in">insert</span>(fds_to_close.<span class="built_in">end</span>(), usap_pipes.<span class="built_in">begin</span>(), usap_pipes.<span class="built_in">end</span>());</span><br><span class="line">    fds_to_ignore.<span class="built_in">insert</span>(fds_to_ignore.<span class="built_in">end</span>(), usap_pipes.<span class="built_in">begin</span>(), usap_pipes.<span class="built_in">end</span>());</span><br><span class="line"></span><br><span class="line">    fds_to_close.<span class="built_in">push_back</span>(gUsapPoolSocketFD);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (gUsapPoolEventFD != <span class="number">-1</span>) &#123;</span><br><span class="line">      fds_to_close.<span class="built_in">push_back</span>(gUsapPoolEventFD);</span><br><span class="line">      fds_to_ignore.<span class="built_in">push_back</span>(gUsapPoolEventFD);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (gSystemServerSocketFd != <span class="number">-1</span>) &#123;</span><br><span class="line">        fds_to_close.<span class="built_in">push_back</span>(gSystemServerSocketFd);</span><br><span class="line">        fds_to_ignore.<span class="built_in">push_back</span>(gSystemServerSocketFd);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">pid_t</span> pid = zygote::<span class="built_in">ForkCommon</span>(env, <span class="literal">false</span>, fds_to_close, fds_to_ignore, <span class="literal">true</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="built_in">SpecializeCommon</span>(env, uid, gid, gids, runtime_flags, rlimits, capabilities, capabilities,</span><br><span class="line">                         mount_external, se_info, nice_name, <span class="literal">false</span>, is_child_zygote == JNI_TRUE,</span><br><span class="line">                         instruction_set, app_data_dir, is_top_app == JNI_TRUE, pkg_data_info_list,</span><br><span class="line">                         allowlisted_data_info_list, mount_data_dirs == JNI_TRUE,</span><br><span class="line">                         mount_storage_dirs == JNI_TRUE);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> pid;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="ForkCommon"><a href="#ForkCommon" class="headerlink" title="ForkCommon"></a>ForkCommon</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Utility routine to fork a process from the zygote.</span></span><br><span class="line"><span class="function"><span class="keyword">pid_t</span> <span class="title">zygote::ForkCommon</span><span class="params">(JNIEnv* env, <span class="keyword">bool</span> is_system_server,</span></span></span><br><span class="line"><span class="function"><span class="params">                         <span class="keyword">const</span> std::vector&lt;<span class="keyword">int</span>&gt;&amp; fds_to_close,</span></span></span><br><span class="line"><span class="function"><span class="params">                         <span class="keyword">const</span> std::vector&lt;<span class="keyword">int</span>&gt;&amp; fds_to_ignore,</span></span></span><br><span class="line"><span class="function"><span class="params">                         <span class="keyword">bool</span> is_priority_fork,</span></span></span><br><span class="line"><span class="function"><span class="params">                         <span class="keyword">bool</span> purge)</span> </span>&#123;</span><br><span class="line">  <span class="built_in">SetSignalHandlers</span>();</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Curry a failure function.</span></span><br><span class="line">  <span class="keyword">auto</span> fail_fn = std::<span class="built_in">bind</span>(zygote::ZygoteFailure, env,</span><br><span class="line">                           is_system_server ? <span class="string">&quot;system_server&quot;</span> : <span class="string">&quot;zygote&quot;</span>,</span><br><span class="line">                           <span class="literal">nullptr</span>, _1);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Temporarily block SIGCHLD during forks. The SIGCHLD handler might</span></span><br><span class="line">  <span class="comment">// log, which would result in the logging FDs we close being reopened.</span></span><br><span class="line">  <span class="comment">// This would cause failures because the FDs are not allowlisted.</span></span><br><span class="line">  <span class="comment">//</span></span><br><span class="line">  <span class="comment">// Note that the zygote process is single threaded at this point.</span></span><br><span class="line">  <span class="built_in">BlockSignal</span>(SIGCHLD, fail_fn);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Close any logging related FDs before we start evaluating the list of</span></span><br><span class="line">  <span class="comment">// file descriptors.</span></span><br><span class="line">  __android_log_close();</span><br><span class="line">  <span class="built_in">AStatsSocket_close</span>();</span><br><span class="line"></span><br><span class="line">  <span class="comment">// If this is the first fork for this zygote, create the open FD table.  If</span></span><br><span class="line">  <span class="comment">// it isn&#x27;t, we just need to check whether the list of open files has changed</span></span><br><span class="line">  <span class="comment">// (and it shouldn&#x27;t in the normal case).</span></span><br><span class="line">  <span class="keyword">if</span> (gOpenFdTable == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">    gOpenFdTable = FileDescriptorTable::<span class="built_in">Create</span>(fds_to_ignore, fail_fn);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    gOpenFdTable-&gt;<span class="built_in">Restat</span>(fds_to_ignore, fail_fn);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  android_fdsan_error_level fdsan_error_level = <span class="built_in">android_fdsan_get_error_level</span>();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (purge) &#123;</span><br><span class="line">    <span class="comment">// Purge unused native memory in an attempt to reduce the amount of false</span></span><br><span class="line">    <span class="comment">// sharing with the child process.  By reducing the size of the libc_malloc</span></span><br><span class="line">    <span class="comment">// region shared with the child process we reduce the number of pages that</span></span><br><span class="line">    <span class="comment">// transition to the private-dirty state when malloc adjusts the meta-data</span></span><br><span class="line">    <span class="comment">// on each of the pages it is managing after the fork.</span></span><br><span class="line">    <span class="built_in">mallopt</span>(M_PURGE, <span class="number">0</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">pid_t</span> pid = fork();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (is_priority_fork) &#123;</span><br><span class="line">      <span class="built_in">setpriority</span>(PRIO_PROCESS, <span class="number">0</span>, PROCESS_PRIORITY_MAX);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="built_in">setpriority</span>(PRIO_PROCESS, <span class="number">0</span>, PROCESS_PRIORITY_MIN);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// The child process.</span></span><br><span class="line">    <span class="built_in">PreApplicationInit</span>();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Clean up any descriptors which must be closed immediately</span></span><br><span class="line">    <span class="built_in">DetachDescriptors</span>(env, fds_to_close, fail_fn);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Invalidate the entries in the USAP table.</span></span><br><span class="line">    <span class="built_in">ClearUsapTable</span>();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Re-open all remaining open file descriptors so that they aren&#x27;t shared</span></span><br><span class="line">    <span class="comment">// with the zygote across a fork.</span></span><br><span class="line">    gOpenFdTable-&gt;<span class="built_in">ReopenOrDetach</span>(fail_fn);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Turn fdsan back on.</span></span><br><span class="line">    <span class="built_in">android_fdsan_set_error_level</span>(fdsan_error_level);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Reset the fd to the unsolicited zygote socket</span></span><br><span class="line">    gSystemServerSocketFd = <span class="number">-1</span>;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="built_in">ALOGD</span>(<span class="string">&quot;Forked child process %d&quot;</span>, pid);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// We blocked SIGCHLD prior to a fork, we unblock it here.</span></span><br><span class="line">  <span class="built_in">UnblockSignal</span>(SIGCHLD, fail_fn);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> pid;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="SpecializeCommon"><a href="#SpecializeCommon" class="headerlink" title="SpecializeCommon"></a>SpecializeCommon</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Utility routine to specialize a zygote child process.</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">SpecializeCommon</span><span class="params">(JNIEnv* env, <span class="keyword">uid_t</span> uid, <span class="keyword">gid_t</span> gid, jintArray gids, jint runtime_flags,</span></span></span><br><span class="line"><span class="function"><span class="params">                             jobjectArray rlimits, jlong permitted_capabilities,</span></span></span><br><span class="line"><span class="function"><span class="params">                             jlong effective_capabilities, jint mount_external,</span></span></span><br><span class="line"><span class="function"><span class="params">                             jstring managed_se_info, jstring managed_nice_name,</span></span></span><br><span class="line"><span class="function"><span class="params">                             <span class="keyword">bool</span> is_system_server, <span class="keyword">bool</span> is_child_zygote,</span></span></span><br><span class="line"><span class="function"><span class="params">                             jstring managed_instruction_set, jstring managed_app_data_dir,</span></span></span><br><span class="line"><span class="function"><span class="params">                             <span class="keyword">bool</span> is_top_app, jobjectArray pkg_data_info_list,</span></span></span><br><span class="line"><span class="function"><span class="params">                             jobjectArray allowlisted_data_info_list, <span class="keyword">bool</span> mount_data_dirs,</span></span></span><br><span class="line"><span class="function"><span class="params">                             <span class="keyword">bool</span> mount_storage_dirs)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span>* process_name = is_system_server ? <span class="string">&quot;system_server&quot;</span> : <span class="string">&quot;zygote&quot;</span>;</span><br><span class="line">    <span class="keyword">auto</span> fail_fn = std::<span class="built_in">bind</span>(ZygoteFailure, env, process_name, managed_nice_name, _1);</span><br><span class="line">    <span class="keyword">auto</span> extract_fn = std::<span class="built_in">bind</span>(ExtractJString, env, process_name, managed_nice_name, _1);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">auto</span> se_info = <span class="built_in">extract_fn</span>(managed_se_info);</span><br><span class="line">    <span class="keyword">auto</span> nice_name = <span class="built_in">extract_fn</span>(managed_nice_name);</span><br><span class="line">    <span class="keyword">auto</span> instruction_set = <span class="built_in">extract_fn</span>(managed_instruction_set);</span><br><span class="line">    <span class="keyword">auto</span> app_data_dir = <span class="built_in">extract_fn</span>(managed_app_data_dir);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Keep capabilities across UID change, unless we&#x27;re staying root.</span></span><br><span class="line">    <span class="keyword">if</span> (uid != <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="built_in">EnableKeepCapabilities</span>(fail_fn);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">SetInheritable</span>(permitted_capabilities, fail_fn);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">DropCapabilitiesBoundingSet</span>(fail_fn);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">bool</span> need_pre_initialize_native_bridge = !is_system_server &amp;&amp; instruction_set.<span class="built_in">has_value</span>() &amp;&amp;</span><br><span class="line">            android::<span class="built_in">NativeBridgeAvailable</span>() &amp;&amp;</span><br><span class="line">            <span class="comment">// Native bridge may be already initialized if this</span></span><br><span class="line">            <span class="comment">// is an app forked from app-zygote.</span></span><br><span class="line">            !android::<span class="built_in">NativeBridgeInitialized</span>() &amp;&amp;</span><br><span class="line">            android::<span class="built_in">NeedsNativeBridge</span>(instruction_set.<span class="built_in">value</span>().<span class="built_in">c_str</span>());</span><br><span class="line"></span><br><span class="line">    <span class="built_in">MountEmulatedStorage</span>(uid, mount_external, need_pre_initialize_native_bridge, fail_fn);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Make sure app is running in its own mount namespace before isolating its data directories.</span></span><br><span class="line">    <span class="built_in">ensureInAppMountNamespace</span>(fail_fn);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Sandbox data and jit profile directories by overlaying a tmpfs on those dirs and bind</span></span><br><span class="line">    <span class="comment">// mount all related packages separately.</span></span><br><span class="line">    <span class="keyword">if</span> (mount_data_dirs) &#123;</span><br><span class="line">        <span class="built_in">isolateAppData</span>(env, pkg_data_info_list, allowlisted_data_info_list, uid, process_name,</span><br><span class="line">                       managed_nice_name, fail_fn);</span><br><span class="line">        <span class="built_in">isolateJitProfile</span>(env, pkg_data_info_list, uid, process_name, managed_nice_name, fail_fn);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// MOUNT_EXTERNAL_INSTALLER, MOUNT_EXTERNAL_PASS_THROUGH, MOUNT_EXTERNAL_ANDROID_WRITABLE apps</span></span><br><span class="line">    <span class="comment">// will have mount_storage_dirs == false here (set by ProcessList.needsStorageDataIsolation()),</span></span><br><span class="line">    <span class="comment">// and hence they won&#x27;t bind mount storage dirs.</span></span><br><span class="line">    <span class="keyword">if</span> (mount_storage_dirs) &#123;</span><br><span class="line">        <span class="built_in">BindMountStorageDirs</span>(env, pkg_data_info_list, uid, process_name, managed_nice_name,</span><br><span class="line">                             fail_fn);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// If this zygote isn&#x27;t root, it won&#x27;t be able to create a process group,</span></span><br><span class="line">    <span class="comment">// since the directory is owned by root.</span></span><br><span class="line">    <span class="keyword">if</span> (!is_system_server &amp;&amp; <span class="built_in">getuid</span>() == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">const</span> <span class="keyword">int</span> rc = <span class="built_in">createProcessGroup</span>(uid, <span class="built_in">getpid</span>());</span><br><span class="line">        <span class="keyword">if</span> (rc == -EROFS) &#123;</span><br><span class="line">            <span class="built_in">ALOGW</span>(<span class="string">&quot;createProcessGroup failed, kernel missing CONFIG_CGROUP_CPUACCT?&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (rc != <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="built_in">ALOGE</span>(<span class="string">&quot;createProcessGroup(%d, %d) failed: %s&quot;</span>, uid, <span class="comment">/* pid= */</span> <span class="number">0</span>, <span class="built_in">strerror</span>(-rc));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">SetGids</span>(env, gids, is_child_zygote, fail_fn);</span><br><span class="line">    <span class="built_in">SetRLimits</span>(env, rlimits, fail_fn);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (need_pre_initialize_native_bridge) &#123;</span><br><span class="line">        <span class="comment">// Due to the logic behind need_pre_initialize_native_bridge we know that</span></span><br><span class="line">        <span class="comment">// instruction_set contains a value.</span></span><br><span class="line">        android::<span class="built_in">PreInitializeNativeBridge</span>(app_data_dir.<span class="built_in">has_value</span>() ? app_data_dir.<span class="built_in">value</span>().<span class="built_in">c_str</span>()</span><br><span class="line">                                                                    : <span class="literal">nullptr</span>,</span><br><span class="line">                                           instruction_set.<span class="built_in">value</span>().<span class="built_in">c_str</span>());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">setresgid</span>(gid, gid, gid) == <span class="number">-1</span>) &#123;</span><br><span class="line">        <span class="built_in">fail_fn</span>(<span class="built_in">CREATE_ERROR</span>(<span class="string">&quot;setresgid(%d) failed: %s&quot;</span>, gid, <span class="built_in">strerror</span>(errno)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Must be called when the new process still has CAP_SYS_ADMIN, in this case,</span></span><br><span class="line">    <span class="comment">// before changing uid from 0, which clears capabilities.  The other</span></span><br><span class="line">    <span class="comment">// alternative is to call prctl(PR_SET_NO_NEW_PRIVS, 1) afterward, but that</span></span><br><span class="line">    <span class="comment">// breaks SELinux domain transition (see b/71859146).  As the result,</span></span><br><span class="line">    <span class="comment">// privileged syscalls used below still need to be accessible in app process.</span></span><br><span class="line">    <span class="built_in">SetUpSeccompFilter</span>(uid, is_child_zygote);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Must be called before losing the permission to set scheduler policy.</span></span><br><span class="line">    <span class="built_in">SetSchedulerPolicy</span>(fail_fn, is_top_app);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">setresuid</span>(uid, uid, uid) == <span class="number">-1</span>) &#123;</span><br><span class="line">        <span class="built_in">fail_fn</span>(<span class="built_in">CREATE_ERROR</span>(<span class="string">&quot;setresuid(%d) failed: %s&quot;</span>, uid, <span class="built_in">strerror</span>(errno)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// The &quot;dumpable&quot; flag of a process, which controls core dump generation, is</span></span><br><span class="line">    <span class="comment">// overwritten by the value in /proc/sys/fs/suid_dumpable when the effective</span></span><br><span class="line">    <span class="comment">// user or group ID changes. See proc(5) for possible values. In most cases,</span></span><br><span class="line">    <span class="comment">// the value is 0, so core dumps are disabled for zygote children. However,</span></span><br><span class="line">    <span class="comment">// when running in a Chrome OS container, the value is already set to 2,</span></span><br><span class="line">    <span class="comment">// which allows the external crash reporter to collect all core dumps. Since</span></span><br><span class="line">    <span class="comment">// only system crashes are interested, core dump is disabled for app</span></span><br><span class="line">    <span class="comment">// processes. This also ensures compliance with CTS.</span></span><br><span class="line">    <span class="keyword">int</span> dumpable = <span class="built_in">prctl</span>(PR_GET_DUMPABLE);</span><br><span class="line">    <span class="keyword">if</span> (dumpable == <span class="number">-1</span>) &#123;</span><br><span class="line">        <span class="built_in">ALOGE</span>(<span class="string">&quot;prctl(PR_GET_DUMPABLE) failed: %s&quot;</span>, <span class="built_in">strerror</span>(errno));</span><br><span class="line">        <span class="built_in">RuntimeAbort</span>(env, __LINE__, <span class="string">&quot;prctl(PR_GET_DUMPABLE) failed&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (dumpable == <span class="number">2</span> &amp;&amp; uid &gt;= AID_APP) &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">prctl</span>(PR_SET_DUMPABLE, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>) == <span class="number">-1</span>) &#123;</span><br><span class="line">            <span class="built_in">ALOGE</span>(<span class="string">&quot;prctl(PR_SET_DUMPABLE, 0) failed: %s&quot;</span>, <span class="built_in">strerror</span>(errno));</span><br><span class="line">            <span class="built_in">RuntimeAbort</span>(env, __LINE__, <span class="string">&quot;prctl(PR_SET_DUMPABLE, 0) failed&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Set process properties to enable debugging if required.</span></span><br><span class="line">    <span class="keyword">if</span> ((runtime_flags &amp; RuntimeFlags::DEBUG_ENABLE_JDWP) != <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="built_in">EnableDebugger</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> ((runtime_flags &amp; RuntimeFlags::PROFILE_FROM_SHELL) != <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="comment">// simpleperf needs the process to be dumpable to profile it.</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">prctl</span>(PR_SET_DUMPABLE, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>) == <span class="number">-1</span>) &#123;</span><br><span class="line">            <span class="built_in">ALOGE</span>(<span class="string">&quot;prctl(PR_SET_DUMPABLE) failed: %s&quot;</span>, <span class="built_in">strerror</span>(errno));</span><br><span class="line">            <span class="built_in">RuntimeAbort</span>(env, __LINE__, <span class="string">&quot;prctl(PR_SET_DUMPABLE, 1) failed&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    HeapTaggingLevel heap_tagging_level;</span><br><span class="line">    <span class="built_in"><span class="keyword">switch</span></span> (runtime_flags &amp; RuntimeFlags::MEMORY_TAG_LEVEL_MASK) &#123;</span><br><span class="line">        <span class="keyword">case</span> RuntimeFlags::MEMORY_TAG_LEVEL_TBI:</span><br><span class="line">            heap_tagging_level = M_HEAP_TAGGING_LEVEL_TBI;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> RuntimeFlags::MEMORY_TAG_LEVEL_ASYNC:</span><br><span class="line">            heap_tagging_level = M_HEAP_TAGGING_LEVEL_ASYNC;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> RuntimeFlags::MEMORY_TAG_LEVEL_SYNC:</span><br><span class="line">            heap_tagging_level = M_HEAP_TAGGING_LEVEL_SYNC;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">default</span>:</span><br><span class="line">            heap_tagging_level = M_HEAP_TAGGING_LEVEL_NONE;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">mallopt</span>(M_BIONIC_SET_HEAP_TAGGING_LEVEL, heap_tagging_level);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Now that we&#x27;ve used the flag, clear it so that we don&#x27;t pass unknown flags to the ART</span></span><br><span class="line">    <span class="comment">// runtime.</span></span><br><span class="line">    runtime_flags &amp;= ~RuntimeFlags::MEMORY_TAG_LEVEL_MASK;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Avoid heap zero initialization for applications without MTE. Zero init may</span></span><br><span class="line">    <span class="comment">// cause app compat problems, use more memory, or reduce performance. While it</span></span><br><span class="line">    <span class="comment">// would be nice to have them for apps, we will have to wait until they are</span></span><br><span class="line">    <span class="comment">// proven out, have more efficient hardware, and/or apply them only to new</span></span><br><span class="line">    <span class="comment">// applications.</span></span><br><span class="line">    <span class="keyword">if</span> (!(runtime_flags &amp; RuntimeFlags::NATIVE_HEAP_ZERO_INIT)) &#123;</span><br><span class="line">        <span class="built_in">mallopt</span>(M_BIONIC_ZERO_INIT, <span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Now that we&#x27;ve used the flag, clear it so that we don&#x27;t pass unknown flags to the ART</span></span><br><span class="line">    <span class="comment">// runtime.</span></span><br><span class="line">    runtime_flags &amp;= ~RuntimeFlags::NATIVE_HEAP_ZERO_INIT;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">bool</span> forceEnableGwpAsan = <span class="literal">false</span>;</span><br><span class="line">    <span class="built_in"><span class="keyword">switch</span></span> (runtime_flags &amp; RuntimeFlags::GWP_ASAN_LEVEL_MASK) &#123;</span><br><span class="line">        <span class="keyword">default</span>:</span><br><span class="line">        <span class="keyword">case</span> RuntimeFlags::GWP_ASAN_LEVEL_NEVER:</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> RuntimeFlags::GWP_ASAN_LEVEL_ALWAYS:</span><br><span class="line">            forceEnableGwpAsan = <span class="literal">true</span>;</span><br><span class="line">            [[fallthrough]];</span><br><span class="line">        <span class="keyword">case</span> RuntimeFlags::GWP_ASAN_LEVEL_LOTTERY:</span><br><span class="line">            <span class="built_in">android_mallopt</span>(M_INITIALIZE_GWP_ASAN, &amp;forceEnableGwpAsan, <span class="built_in"><span class="keyword">sizeof</span></span>(forceEnableGwpAsan));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// Now that we&#x27;ve used the flag, clear it so that we don&#x27;t pass unknown flags to the ART</span></span><br><span class="line">    <span class="comment">// runtime.</span></span><br><span class="line">    runtime_flags &amp;= ~RuntimeFlags::GWP_ASAN_LEVEL_MASK;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">NeedsNoRandomizeWorkaround</span>()) &#123;</span><br><span class="line">        <span class="comment">// Work around ARM kernel ASLR lossage (http://b/5817320).</span></span><br><span class="line">        <span class="keyword">int</span> old_personality = <span class="built_in">personality</span>(<span class="number">0xffffffff</span>);</span><br><span class="line">        <span class="keyword">int</span> new_personality = <span class="built_in">personality</span>(old_personality | ADDR_NO_RANDOMIZE);</span><br><span class="line">        <span class="keyword">if</span> (new_personality == <span class="number">-1</span>) &#123;</span><br><span class="line">            <span class="built_in">ALOGW</span>(<span class="string">&quot;personality(%d) failed: %s&quot;</span>, new_personality, <span class="built_in">strerror</span>(errno));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">SetCapabilities</span>(permitted_capabilities, effective_capabilities, permitted_capabilities,</span><br><span class="line">                    fail_fn);</span><br><span class="line"></span><br><span class="line">    __android_log_close();</span><br><span class="line">    <span class="built_in">AStatsSocket_close</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span>* se_info_ptr = se_info.<span class="built_in">has_value</span>() ? se_info.<span class="built_in">value</span>().<span class="built_in">c_str</span>() : <span class="literal">nullptr</span>;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span>* nice_name_ptr = nice_name.<span class="built_in">has_value</span>() ? nice_name.<span class="built_in">value</span>().<span class="built_in">c_str</span>() : <span class="literal">nullptr</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">selinux_android_setcontext</span>(uid, is_system_server, se_info_ptr, nice_name_ptr) == <span class="number">-1</span>) &#123;</span><br><span class="line">        <span class="built_in">fail_fn</span>(<span class="built_in">CREATE_ERROR</span>(<span class="string">&quot;selinux_android_setcontext(%d, %d, \&quot;%s\&quot;, \&quot;%s\&quot;) failed&quot;</span>, uid,</span><br><span class="line">                             is_system_server, se_info_ptr, nice_name_ptr));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Make it easier to debug audit logs by setting the main thread&#x27;s name to the</span></span><br><span class="line">    <span class="comment">// nice name rather than &quot;app_process&quot;.</span></span><br><span class="line">    <span class="keyword">if</span> (nice_name.<span class="built_in">has_value</span>()) &#123;</span><br><span class="line">        <span class="built_in">SetThreadName</span>(nice_name.<span class="built_in">value</span>());</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (is_system_server) &#123;</span><br><span class="line">        <span class="built_in">SetThreadName</span>(<span class="string">&quot;system_server&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Unset the SIGCHLD handler, but keep ignoring SIGHUP (rationale in SetSignalHandlers).</span></span><br><span class="line">    <span class="built_in">UnsetChldSignalHandler</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (is_system_server) &#123;</span><br><span class="line">        env-&gt;<span class="built_in">CallStaticVoidMethod</span>(gZygoteClass, gCallPostForkSystemServerHooks, runtime_flags);</span><br><span class="line">        <span class="keyword">if</span> (env-&gt;<span class="built_in">ExceptionCheck</span>()) &#123;</span><br><span class="line">            <span class="built_in">fail_fn</span>(<span class="string">&quot;Error calling post fork system server hooks.&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// TODO(b/117874058): Remove hardcoded label here.</span></span><br><span class="line">        <span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">char</span>* kSystemServerLabel = <span class="string">&quot;u:r:system_server:s0&quot;</span>;</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">selinux_android_setcon</span>(kSystemServerLabel) != <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="built_in">fail_fn</span>(<span class="built_in">CREATE_ERROR</span>(<span class="string">&quot;selinux_android_setcon(%s)&quot;</span>, kSystemServerLabel));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (is_child_zygote) &#123;</span><br><span class="line">        <span class="built_in">initUnsolSocketToSystemServer</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    env-&gt;<span class="built_in">CallStaticVoidMethod</span>(gZygoteClass, gCallPostForkChildHooks, runtime_flags,</span><br><span class="line">                              is_system_server, is_child_zygote, managed_instruction_set);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Reset the process priority to the default value.</span></span><br><span class="line">    <span class="built_in">setpriority</span>(PRIO_PROCESS, <span class="number">0</span>, PROCESS_PRIORITY_DEFAULT);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (env-&gt;<span class="built_in">ExceptionCheck</span>()) &#123;</span><br><span class="line">        <span class="built_in">fail_fn</span>(<span class="string">&quot;Error calling post fork hooks.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E9%97%B2%E6%9D%82%E7%AC%94%E8%AE%B0/" rel="tag"># 闲杂笔记</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/04/08/IO%E6%A8%A1%E5%9E%8B/" rel="prev" title="IO模型">
+                  <i class="fa fa-chevron-left"></i> IO模型
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">张石</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.1.0/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink.listen({
+        timeout : 500,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://sldkfjoias.github.io/2021/05/06/Android%E4%B8%80%E4%BA%9B%E4%B8%9C%E8%A5%BF/',]
+      });
+      });
+  </script>
+
+</body>
+</html>
