@@ -23,21 +23,21 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"sldkfjoias.github.io","root":"/","images":"/images","scheme":"Pisces","version":"8.3.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
-<meta name="description" content="刷LeetCode经常要搞个unordered_map或者unordered_set啥的出来，但是老忘那个hash咋写，写一篇记一下。 C++没有给pair添加hash函数，所以使用unordered_map&lt;pair&lt;U, V&gt;,T&gt;这种将pair作为key的结构时，要自己手动搞一个出来。 123456789struct hashfunc&amp;#123;template&amp;lt">
+<meta name="description" content="没有所谓的null reference一个reference必须总代表某个对象，但一个pointer可以指向nullptr。也就是说，如果我需要让某个变量总是必须代表某个对象，而不能成为nullptr，那就应该使用reference。 有人不服，写这种东西 12char *pc &#x3D; 0; &#x2F;&#x2F;将pointer设定为nullptrchar &amp;rc &#x3D; *pc; &#x2F;&#x2F;让reference代表n">
 <meta property="og:type" content="article">
-<meta property="og:title" content="C++的hash函数">
-<meta property="og:url" content="https://sldkfjoias.github.io/2021/05/12/pair-hash/index.html">
+<meta property="og:title" content="指针和引用">
+<meta property="og:url" content="https://sldkfjoias.github.io/2021/05/12/reference&pointers/index.html">
 <meta property="og:site_name" content="YeeHHa">
-<meta property="og:description" content="刷LeetCode经常要搞个unordered_map或者unordered_set啥的出来，但是老忘那个hash咋写，写一篇记一下。 C++没有给pair添加hash函数，所以使用unordered_map&lt;pair&lt;U, V&gt;,T&gt;这种将pair作为key的结构时，要自己手动搞一个出来。 123456789struct hashfunc&amp;#123;template&amp;lt">
+<meta property="og:description" content="没有所谓的null reference一个reference必须总代表某个对象，但一个pointer可以指向nullptr。也就是说，如果我需要让某个变量总是必须代表某个对象，而不能成为nullptr，那就应该使用reference。 有人不服，写这种东西 12char *pc &#x3D; 0; &#x2F;&#x2F;将pointer设定为nullptrchar &amp;rc &#x3D; *pc; &#x2F;&#x2F;让reference代表n">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-05-12T09:34:47.000Z">
-<meta property="article:modified_time" content="2021-05-12T11:59:48.948Z">
+<meta property="article:published_time" content="2021-05-12T12:12:28.000Z">
+<meta property="article:modified_time" content="2021-05-12T13:15:43.236Z">
 <meta property="article:author" content="张石">
 <meta property="article:tag" content="C++">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://sldkfjoias.github.io/2021/05/12/pair-hash/">
+<link rel="canonical" href="https://sldkfjoias.github.io/2021/05/12/reference&pointers/">
 
 
 <script class="page-configurations">
@@ -49,7 +49,7 @@
     lang   : 'zh-CN'
   };
 </script>
-<title>C++的hash函数 | YeeHHa</title>
+<title>指针和引用 | YeeHHa</title>
   
 
 
@@ -164,7 +164,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A1%BA%E4%BE%BF%E5%9C%A8%E8%BF%99%E6%AF%94%E8%BE%83%E4%B8%8Bunordered-map%E5%92%8Cmap"><span class="nav-number">1.</span> <span class="nav-text">顺便在这比较下unordered_map和map</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B2%A1%E6%9C%89%E6%89%80%E8%B0%93%E7%9A%84null-reference"><span class="nav-number">1.</span> <span class="nav-text">没有所谓的null reference</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pointers%E5%8F%AF%E4%BB%A5%E8%A2%AB%E9%87%8D%E6%96%B0%E8%B5%8B%E5%80%BC"><span class="nav-number">2.</span> <span class="nav-text">Pointers可以被重新赋值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">小结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E6%83%85%E5%86%B5"><span class="nav-number">4.</span> <span class="nav-text">其他情况</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -224,7 +224,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://sldkfjoias.github.io/2021/05/12/pair-hash/">
+    <link itemprop="mainEntityOfPage" href="https://sldkfjoias.github.io/2021/05/12/reference&pointers/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -237,7 +237,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          C++的hash函数
+          指针和引用
         </h1>
 
         <div class="post-meta-container">
@@ -249,7 +249,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2021-05-12 17:34:47 / 修改时间：19:59:48" itemprop="dateCreated datePublished" datetime="2021-05-12T17:34:47+08:00">2021-05-12</time>
+      <time title="创建时间：2021-05-12 20:12:28 / 修改时间：21:15:43" itemprop="dateCreated datePublished" datetime="2021-05-12T20:12:28+08:00">2021-05-12</time>
     </span>
 
   
@@ -262,79 +262,28 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p><em>刷LeetCode经常要搞个unordered_map或者unordered_set啥的出来，但是老忘那个hash咋写，写一篇记一下。</em></p>
-<p>C++没有给pair添加hash函数，所以使用<code>unordered_map&lt;pair&lt;U, V&gt;,T&gt;</code>这种将pair作为key的结构时，要自己手动搞一个出来。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">hashfunc</span>&#123;</span></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> U&gt;</span><br><span class="line">    <span class="function"><span class="keyword">size_t</span> <span class="title">operator</span><span class="params">()</span> <span class="params">(<span class="keyword">const</span> pair&lt;T, U&gt; &amp;p)</span> <span class="keyword">const</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> hash&lt;T&gt;()(i.first) ^ hash&lt;T&gt;()(i.second);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">unordered_map&lt;pair&lt;T, U&gt;, V, hashfunc&gt; h;</span><br></pre></td></tr></table></figure>
-<p>重载了<code>operator()</code>，接受一个<code>pair&lt;T, U&gt;</code>，返回的<code>size_t</code>类型是一个哈希值。</p>
-<p>想到哪写哪，hash的5点要求</p>
+        <h2 id="没有所谓的null-reference"><a href="#没有所谓的null-reference" class="headerlink" title="没有所谓的null reference"></a>没有所谓的null reference</h2><p>一个reference必须总代表某个对象，但一个pointer可以指向nullptr。也就是说，如果我需要让某个变量总是必须代表某个对象，而不能成为nullptr，那就应该使用reference。</p>
+<p>有人不服，写这种东西</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">char</span> *pc = <span class="number">0</span>; <span class="comment">//将pointer设定为nullptr</span></span><br><span class="line"><span class="keyword">char</span> &amp;rc = *pc; <span class="comment">//让reference代表null pointer</span></span><br></pre></td></tr></table></figure>
+<p>上面是个弱智行为，会引发不可预期的效果哈哈哈哈哈！</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">string &amp;rs; <span class="comment">//错误！reference必须初始化</span></span><br><span class="line"><span class="function">string <span class="title">s</span><span class="params">(<span class="string">&quot;asdf&quot;</span>)</span></span>;</span><br><span class="line">string&amp; rs = s; <span class="comment">//没问题，rs指向s</span></span><br></pre></td></tr></table></figure>
+<p>但是pointers就没有上述的限制，也就存在风险：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">string *ps; <span class="comment">//未初始化指针，风险</span></span><br></pre></td></tr></table></figure>
+<p>由上述也就可以引出一个说法：“reference可能会比pointers更有效率”，因为使用reference之前不需要测试有效性。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">printDouble</span><span class="params">(<span class="keyword">const</span> <span class="keyword">double</span>&amp; rd)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    cout&lt;&lt;rd; <span class="comment">//不需要测试rd，它一定是某个double</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">printDouble</span><span class="params">(<span class="keyword">const</span> <span class="keyword">double</span> *pd)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(pd)&#123; <span class="comment">//需要测试</span></span><br><span class="line">        cout &lt;&lt; *pd;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Pointers可以被重新赋值"><a href="#Pointers可以被重新赋值" class="headerlink" title="Pointers可以被重新赋值"></a>Pointers可以被重新赋值</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">string <span class="title">s1</span><span class="params">(<span class="string">&quot;Nancy&quot;</span>)</span></span>;</span><br><span class="line"><span class="function">string <span class="title">s2</span><span class="params">(<span class="string">&quot;Clancy&quot;</span>)</span></span>;</span><br><span class="line"></span><br><span class="line">string &amp;rs = s1; <span class="comment">//rs代表s1</span></span><br><span class="line">string *ps = &amp;s1; <span class="comment">//ps指向s1</span></span><br><span class="line">rs = s2; <span class="comment">//rs仍然指向s1，只不过s1编程&quot;Clancy&quot;了</span></span><br><span class="line"></span><br><span class="line">ps = &amp;s2; <span class="comment">//ps指向s2，但是s1没有变化</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><ul>
+<li>一般而言，当需要考虑“不指向任何对象”的可能性时，<strong>或是</strong>考虑“不同时间指向不同对象”的时候，就应该采用pointer。</li>
+<li>当确定“总是会代表某个对象”<strong>并且</strong>“一旦代表了该对象就不会再改变”就应该选择reference</li>
+</ul>
+<h2 id="其他情况"><a href="#其他情况" class="headerlink" title="其他情况"></a>其他情况</h2><p>还有某些情况需要使用reference，例如实现某些操作符时。最常见的例子就是<code>operator[]</code>。这个操作符很特别的必须返回某种“能够被当做assignment赋值对象”的东西：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">vector&lt;<span class="keyword">int</span>&gt; <span class="title">vec</span><span class="params">(<span class="number">10</span>)</span></span>;</span><br><span class="line">vec[<span class="number">5</span>] = <span class="number">10</span>; <span class="comment">//assignment的赋值对象是operator[]的返回值</span></span><br><span class="line"><span class="comment">//上述是很常见，并且符合直觉的做法</span></span><br></pre></td></tr></table></figure>
+<p>如果<code>operator[]</code>返回的是一个pointer的话，就必须这么写<code>*vec[5] = 10;</code>但这令<code>vec</code>看起来像是个以指针形成的<code>vector&lt;int *&gt;</code>但是并不是，所以就很别扭。这种情况下，就应该返回一个reference。</p>
 <blockquote>
-<ul>
-<li>Accepts a single parameter of type Key.</li>
-<li>Returns a value of type <code>std::size_t</code> that represents the hash value of the parameter.</li>
-<li>Does not throw exceptions when called.</li>
-<li>For two parameters k1 and k2 that are equal, <code>std::hash&lt;Key&gt;()(k1) == std::hash&lt;Key&gt;()(k2)</code>.</li>
-<li>For two different parameters k1 and k2 that are not equal, the probability that <code>std::hash&lt;Key&gt;()(k1) == std::hash&lt;Key&gt;()(k2)</code> should be very small, approaching <code>1.0/std::numeric_limits&lt;std::size_t&gt;::max()</code>.</li>
-</ul>
+<p>存在一个例外，后面再看</p>
 </blockquote>
-<p>然后std定义了的：</p>
-<blockquote>
-<ul>
-<li><code>template&lt;&gt; struct hash&lt;bool&gt;;</code></li>
-<li><code>template&lt;&gt; struct hash&lt;char&gt;;</code></li>
-<li><code>template&lt;&gt; struct hash&lt;signed char&gt;;</code></li>
-<li><code>template&lt;&gt; struct hash&lt;unsigned char&gt;;</code></li>
-<li><code>template&lt;&gt; struct hash&lt;char8_t&gt;;</code>        // C++20</li>
-<li><code>template&lt;&gt; struct hash&lt;char16_t&gt;;</code></li>
-<li><code>template&lt;&gt; struct hash&lt;char32_t&gt;;</code></li>
-<li><code>template&lt;&gt; struct hash&lt;wchar_t&gt;;</code></li>
-<li><code>template&lt;&gt; struct hash&lt;short&gt;;</code></li>
-<li><code>template&lt;&gt; struct hash&lt;unsigned short&gt;;</code></li>
-<li><code>template&lt;&gt; struct hash&lt;int&gt;;</code></li>
-<li><code>template&lt;&gt; struct hash&lt;unsigned int&gt;;</code></li>
-<li><code>template&lt;&gt; struct hash&lt;long&gt;;</code></li>
-<li><code>template&lt;&gt; struct hash&lt;long long&gt;;</code></li>
-<li><code>template&lt;&gt; struct hash&lt;unsigned long&gt;;</code></li>
-<li><code>template&lt;&gt; struct hash&lt;unsigned long long&gt;;</code></li>
-<li><code>template&lt;&gt; struct hash&lt;float&gt;;</code></li>
-<li><code>template&lt;&gt; struct hash&lt;double&gt;;</code></li>
-<li><code>template&lt;&gt; struct hash&lt;long double&gt;;</code></li>
-<li><code>template&lt;&gt; struct hash&lt;std::nullptr_t&gt;;</code></li>
-<li><code>template&lt; class T &gt; struct hash&lt;T*&gt;;</code></li>
-</ul>
-</blockquote>
-<h2 id="顺便在这比较下unordered-map和map"><a href="#顺便在这比较下unordered-map和map" class="headerlink" title="顺便在这比较下unordered_map和map"></a>顺便在这比较下unordered_map和map</h2><ul>
-<li>map:基于红黑树实现，是一种自平衡二叉树，内部数据有序，最坏情况增删改查时间复杂度为<code>O(logn)</code></li>
-<li>unordered_map:基于Hash表实现，数据无序，平均时间复杂度为<code>O(1)</code>，最坏情况下时间复杂度<code>O(n)</code></li>
-</ul>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Key</span>,</span></span><br><span class="line"><span class="class">    <span class="keyword">class</span> <span class="title">T</span>,</span></span><br><span class="line"><span class="class">    <span class="keyword">class</span> <span class="title">Compare</span> =</span> less&lt;Key&gt;,</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Alloc</span> =</span> allocator&lt;pair&lt;<span class="keyword">const</span> Key, T&gt;&gt;</span><br><span class="line">&gt; <span class="class"><span class="keyword">class</span> <span class="title">map</span>;</span></span><br></pre></td></tr></table></figure>
-<p>也就是说map的键值对是根据这个Compare来进行排序的。也就可以自己搞个排序函数进去，然后遍历。</p>
-<p>优缺点对比：</p>
-<ul>
-<li>map:<ul>
-<li>优点：<ol>
-<li>有序，可以定义一个比较函数进行排序</li>
-<li>保证了最坏情况下增删查的时间复杂度</li>
-</ol>
-</li>
-<li>缺点：<ol>
-<li>空间占用率高，小数据情况下不如unordered_map效率高</li>
-</ol>
-</li>
-</ul>
-</li>
-<li>unordered_map:<ul>
-<li>优点：<ol>
-<li>小数据规模情况下增删查效率高，hash函数合理能够达到O(1)</li>
-</ol>
-</li>
-<li>缺点：<ol>
-<li>无序</li>
-<li>hash函数不合理情况下增删查时间复杂度达到O(n)</li>
-</ol>
-</li>
-</ul>
-</li>
-</ul>
 
     </div>
 
@@ -351,13 +300,13 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2021/05/06/Android%E4%B8%80%E4%BA%9Bapp%E5%90%AF%E5%8A%A8%E7%9F%A5%E8%AF%86/" rel="prev" title="有关Android一些笔记">
-                  <i class="fa fa-chevron-left"></i> 有关Android一些笔记
+                <a href="/2021/05/12/pair-hash/" rel="prev" title="C++的hash函数">
+                  <i class="fa fa-chevron-left"></i> C++的hash函数
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2021/05/12/reference&pointers/" rel="next" title="指针和引用">
-                  指针和引用 <i class="fa fa-chevron-right"></i>
+                <a href="/2021/05/12/castWithCPPForm/" rel="next" title="使用C++转型操作符">
+                  使用C++转型操作符 <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>
@@ -435,7 +384,7 @@
       quicklink.listen({
         timeout : 500,
         priority: true,
-        ignores : [uri => uri.includes('#'),uri => uri === 'https://sldkfjoias.github.io/2021/05/12/pair-hash/',]
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://sldkfjoias.github.io/2021/05/12/reference&pointers/',]
       });
       });
   </script>

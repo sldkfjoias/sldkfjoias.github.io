@@ -172,7 +172,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-count">23</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -208,6 +208,293 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://sldkfjoias.github.io/2020/08/29/%E5%8E%86%E5%B9%B4%E5%A4%8D%E8%AF%95%E9%97%AE%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="张石">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YeeHHa">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/08/29/%E5%8E%86%E5%B9%B4%E5%A4%8D%E8%AF%95%E9%97%AE%E9%A2%98/" class="post-title-link" itemprop="url">一些数据库相关问题</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-08-29 16:41:56" itemprop="dateCreated datePublished" datetime="2020-08-29T16:41:56+08:00">2020-08-29</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-04-08 16:59:19" itemprop="dateModified" datetime="2021-04-08T16:59:19+08:00">2021-04-08</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h4 id="主码，超码，候选码，主属性"><a href="#主码，超码，候选码，主属性" class="headerlink" title="主码，超码，候选码，主属性"></a>主码，超码，候选码，主属性</h4><ul>
+<li>超码：一个或多个属性，能够唯一标识一个元组。</li>
+<li>候选码：超码之中，任意真子集都不能构成超码的最小超码，称为候选码，简称码，一个表可以有多个码。</li>
+<li>主码：人为选中的候选码，作为唯一标识一个元组的候选码，称为主码。</li>
+<li>主属性：所有候选码的每个属性称为主属性</li>
+</ul>
+<h4 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> index StudentID_index <span class="keyword">on</span> student(ID);</span><br></pre></td></tr></table></figure>
+
+<p>索引通常使用B树或B+树实现，通过数据库系统维护的查找特定项的数据结构，实现高效查找。<br>优点：</p>
+<ul>
+<li>创建唯一性索引，可以保证数据的唯一性。</li>
+<li>加快数据检索速度。</li>
+<li>排序时也可加快速度。</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>创建索引和维护索引的时间开销。</li>
+<li>建立索引的空间开销。</li>
+</ul>
+<h4 id="B-树索引和Hash索引的区别"><a href="#B-树索引和Hash索引的区别" class="headerlink" title="B+树索引和Hash索引的区别"></a>B+树索引和Hash索引的区别</h4><ul>
+<li>Hash可以通过特定运算，一次定位，检索效率高</li>
+<li>Hash仅能满足“=”、“IN”、“”的查询，无法实现偏序等操作，无法进行排序。</li>
+<li>组合索引时，Hash索引不能利用部分索引进行查找。</li>
+<li>大量重复关键字Hash索引效率低下</li>
+<li>B+树需要从根节点到叶节点多次IO</li>
+</ul>
+<h4 id="五大约束"><a href="#五大约束" class="headerlink" title="五大约束"></a>五大约束</h4><ol>
+<li>主码约束:主码唯一、非空<br>例:<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> A</span><br><span class="line">(</span><br><span class="line">    ID <span class="type">varchar</span>(<span class="number">20</span>),</span><br><span class="line">    <span class="keyword">constraint</span> c_ID <span class="keyword">unique</span>(ID)</span><br><span class="line">    <span class="keyword">constraint</span> c_ID <span class="keyword">primary</span> key (ID)</span><br><span class="line">);</span><br></pre></td></tr></table></figure></li>
+<li>唯一约束：属性唯一性，可空，但空值最多也只能有一个。<br>例:<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> A</span><br><span class="line">(</span><br><span class="line">    ID <span class="type">char</span>(<span class="number">20</span>),</span><br><span class="line">    <span class="keyword">constraint</span> c_ID <span class="keyword">unique</span>(ID)</span><br><span class="line">);</span><br></pre></td></tr></table></figure></li>
+<li>检查约束：声明该属性的域，会检查是否在声明的域内<br>例:<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> A</span><br><span class="line">(</span><br><span class="line">    age <span class="type">numeric</span>(<span class="number">3</span>, <span class="number">0</span>),</span><br><span class="line">    <span class="keyword">constraint</span> c_age <span class="keyword">check</span>(age <span class="operator">&gt;=</span> <span class="number">0</span> <span class="operator">&amp;&amp;</span> age <span class="operator">&lt;=</span> <span class="number">150</span>)</span><br><span class="line">);</span><br></pre></td></tr></table></figure></li>
+<li>默认约束：当插入或是修改一个元组后,若某一属性为null,则会自动填充默认值。<br>例：<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> A</span><br><span class="line">(</span><br><span class="line">    age <span class="type">numeric</span>(<span class="number">3</span>, <span class="number">0</span>),</span><br><span class="line">    <span class="keyword">constraint</span> c_age <span class="keyword">default</span>(<span class="number">18</span>) <span class="keyword">for</span> age</span><br><span class="line">);</span><br></pre></td></tr></table></figure></li>
+<li>外码约束：类似参照完整性依赖<br>例:<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> Grade</span><br><span class="line">(</span><br><span class="line">    student_ID <span class="type">char</span>(<span class="number">20</span>),</span><br><span class="line">    course_ID <span class="type">char</span>(<span class="number">20</span>),</span><br><span class="line">    grade <span class="type">numeric</span>(<span class="number">5</span>, <span class="number">2</span>),</span><br><span class="line">    <span class="keyword">constraint</span> c_student_ID <span class="keyword">Foreign</span> key(student_ID) <span class="keyword">References</span> Student(ID),</span><br><span class="line">    <span class="keyword">constraint</span> c_course_id <span class="keyword">Foreign</span> key(course_ID) <span class="keyword">References</span> Course(ID)</span><br><span class="line">);</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h4 id="group-by之后having-和-where的区别"><a href="#group-by之后having-和-where的区别" class="headerlink" title="group by之后having 和 where的区别:"></a>group by之后having 和 where的区别:</h4><ol>
+<li>where子句删选from子句中进行筛选之后再进行聚集</li>
+<li>having发生在聚集之后,从聚集结果中进行筛选</li>
+<li>如果where和having连用,就是先从from的表中进行where筛选,之后进行聚集,聚集之后再进行where筛选</li>
+</ol>
+<h4 id="触发器trigger"><a href="#触发器trigger" class="headerlink" title="触发器trigger"></a>触发器trigger</h4><p>用于保证完整性约束, 可以实现未被SQL约束机制制定的某些完整性约束。<br>设定条件：</p>
+<ul>
+<li>指明什么条件下执行触发器。被分解为一个引起触发器被监测的事件和一个触发器执行必须满足的条件。</li>
+<li>指明触发器执行时的动作。  </li>
+</ul>
+<p><strong>何时不用触发器：</strong></p>
+<ul>
+<li><p>在支持物化视图的数据库中，物化视图由数据库自动维护，无需触发器</p>
+</li>
+<li><p>在数据复制到数据库的副本过程中，数据库系统会提供内在的数据库复制工具，无需使用</p>
+</li>
+<li><p>数据库备份、拷贝过程中，禁止使用。应该在备份站点接管业务之后，再启动触发器。</p>
+<h4 id="视图和游标"><a href="#视图和游标" class="headerlink" title="视图和游标"></a>视图和游标</h4></li>
+<li><p><strong>视图：</strong><br>SQL允许通过查询来定义”虚关系”, 在概念上包含查询的结果, 虚关系并不预先计算并存储, 而是在使用需关系的时候才通过执行查询倍计算出来。不是逻辑模型的一部分，但作为虚关系对用户可见的关系称为：视图。<br>数据库会存储视图的<strong>定义本身</strong>，而不会存储视图的查询表达式的执行结果。也就是说，一旦视图关系出现在查询中，它就会被已存储的查询表达式代替。（有点像内联函数那感觉）  </p>
+<blockquote>
+<p>视图的优点:  </p>
+<ol>
+<li>便于用户使用简单的查询语句进行查询</li>
+<li>维护数据的独立性,视图可以从多个表中检索数据</li>
+<li>便于权限的管理</li>
+<li>相同数据可以产生不同的视图。  </li>
+</ol>
+<p>视图的缺点：</p>
+<ol>
+<li>相对于物化视图而言，效率较低，是类似内联函数，在执行视图查询时，DBS会将视图转换成SQL再进行查询。</li>
+<li>大部分情况不允许对视图进行修改，会引起不一致情况出现。</li>
+</ol>
+</blockquote>
+</li>
+<li><p><strong>游标：</strong><br>SQL会把SQL作用结果暂时保存在内存中，可以使用游标来显示、操作这个结果的部分，比如第一条、第二条，前十条等。一般不使用，用于逐条处理数据时会使用。</p>
+</li>
+</ul>
+<h4 id="存储过程"><a href="#存储过程" class="headerlink" title="存储过程"></a>存储过程</h4><p>预编译的SQL语句，<strong>优点:</strong> 允许模块化设计，只需一次创建，可以多次使用。并且会预编译，执行效率较高。<strong>缺点:移植性差</strong><br>存储过程与函数没有本质区别<br>存储过程 | 函数<br>-|-<br>用于完成特定的SQL语句操作 | 用于特定的数据<br>create procedure | create function<br>可以返回多个值 | 只有一个返回值<br>可作为独立语句执行 | 不可独立执行,必须作为表达式一部分<br>SQL语句不能调用存储过程 | SQL可以调用函数</p>
+<h4 id="drop、truncate、delete"><a href="#drop、truncate、delete" class="headerlink" title="drop、truncate、delete"></a>drop、truncate、delete</h4><ul>
+<li>drop:DDL删除掉整个表，释放所有空间，不能回滚</li>
+<li>truncate:DDL不会触发触发器，删除表中所有数据，不会为单独的删除进行日志记录，不能回滚</li>
+<li>delete:DML会触发触发器，使用where可每次删除一行，同时会保存每个删除通过日志保存用以回滚</li>
+</ul>
+<h4 id="临时表"><a href="#临时表" class="headerlink" title="临时表"></a>临时表</h4><p>临时表只会在当前连接中可见，当连接关闭时，SQL会自动删除并释放所有空间，不同链接中可以创建同名表。</p>
+<h4 id="五大范式"><a href="#五大范式" class="headerlink" title="五大范式"></a>五大范式</h4><ol>
+<li><p><strong>1NF:原子属性不可再分</strong></p>
+</li>
+<li><p><strong>2NF:非主属性完全依赖于主码。消除了非主属性对码的部分依赖</strong><br>例如：关系表为（<em>学号</em>，姓名，<em>课程名称</em>，成绩，学分）<br>其中（学号，课程名）为主码<br>（学号，课程名）$\rarr$（姓名，年龄，成绩，学分）<br>而由于存在<br>（学号）$\rarr$（姓名，年龄）<br>（课程名称）$\rarr$(学分)<br>所以该关系表不符合第二范式  </p>
+</li>
+<li><p><strong>3NF:消除了非主属性对码的传递依赖</strong><br>例如：存在关系表（#学号，学院，学院主任）<br>其中（#学号）$\stackrel{f}{\rarr}$（学院）<br>又有（学院）$\stackrel{f}{\rarr}$（主任）<br>即存在非主属性对主码的传递依赖，故不符合第三范式。</p>
+</li>
+<li><p><strong>BCNF:3NF基础上删除了主属性对码的传递依赖和部分依赖。</strong><br>换句话说符合BCNF的关系模式中：</p>
+<ul>
+<li>对于任何$\alpha\rarr\beta$或者$\alpha$是R的一个超码</li>
+<li>这是一个平凡函数依赖($\beta\subseteq\alpha$)</li>
+</ul>
+<p>例如：存在关系模式（学生，教师，课程）其中每个教师只教授一门课程，每门课程可以由多名教师教授。某个学生选定一门课便对应一个固定的教师。<br>可以得到如下函数依赖：<br>（学生，课程）$\rarr$（教师）；<br>（学生，教师）$\rarr$（课程）；<br>（教师）$\rarr$（课程）。<br>其中（学生，课程）和（学生，教师）都是候选码。该模型符合3NF因为没有任何非主属性对候选码的传递依赖或部分依赖。但不属于BCNF因为教师是决定因素而教师不是超码。</p>
+</li>
+<li><p><strong>4NF：消除了多值依赖</strong></p>
+</li>
+</ol>
+<h4 id="非关系型数据库和关系型数据库"><a href="#非关系型数据库和关系型数据库" class="headerlink" title="非关系型数据库和关系型数据库"></a>非关系型数据库和关系型数据库</h4><p>非关系型数据库：</p>
+<ul>
+<li>性能：NoSQL基于键值对，无需SQL层的解析，性能较高。</li>
+<li>可扩展性：数据之间没有耦合性，容易扩展。</li>
+</ul>
+<p>关系型数据库：</p>
+<ul>
+<li>复杂查询：可以用SQL语句方便的在一个表及多个表之间做复杂的数据查询。</li>
+<li>事务支持：使得对于安全性能很高的数据访问要求得以实现。</li>
+</ul>
+<h4 id="连接"><a href="#连接" class="headerlink" title="连接"></a>连接</h4><ul>
+<li>自然连接</li>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/8696383/difference-between-natural-join-and-inner-join">内连接</a>：与自然连接类似，但不要求属性列同名，可以用using和on指定连接条件。并且不会删除连接条件那个列</li>
+<li>左外连接</li>
+<li>右外连接</li>
+<li>全外连接</li>
+<li>交叉连接：产生两个关系的笛卡尔积，不做选择。</li>
+</ul>
+<h4 id="char和varchar"><a href="#char和varchar" class="headerlink" title="char和varchar"></a>char和varchar</h4><ul>
+<li>char：</li>
+<li><ul>
+<li>char长度固定，不可变会用空格填充，存取效率高，空间换时间</li>
+</ul>
+</li>
+<li>varchar：</li>
+<li><ul>
+<li>varchar长度可变，时间换空间</li>
+</ul>
+</li>
+</ul>
+<h4 id="DDL-DML-DCL"><a href="#DDL-DML-DCL" class="headerlink" title="DDL DML DCL"></a>DDL DML DCL</h4><ul>
+<li>DDL:数据库定义语言</li>
+<li>DML:数据库操作语言</li>
+<li>DCL:数据库控制语言，可用于授权或收回权限，进行回滚，提交等操作。</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://sldkfjoias.github.io/2020/04/21/Tcp/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="张石">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YeeHHa">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/04/21/Tcp/" class="post-title-link" itemprop="url">TCP一些问题</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-04-21 18:18:34" itemprop="dateCreated datePublished" datetime="2020-04-21T18:18:34+08:00">2020-04-21</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-04-08 17:01:46" itemprop="dateModified" datetime="2021-04-08T17:01:46+08:00">2021-04-08</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="为什么是3次握手而不是2次握手"><a href="#为什么是3次握手而不是2次握手" class="headerlink" title="为什么是3次握手而不是2次握手"></a>为什么是3次握手而不是2次握手</h2><p>三次握手具体：</p>
+<ol>
+<li>客户端发给服务器SYN seq：确认服务器能建立连接</li>
+<li>服务器发给客户端SYN ACK 并分配资源：确定服务器可以发送数据，可以建立连接，并且确认客户端的起始序列号</li>
+<li>客户端第三次握手，并可以携带数据：确定客户端可以发送数据，并确认服务器端起始序列号</li>
+</ol>
+<p>考虑这种情况，客户端发出SYN建立连接请求，之后该报文段超时，重发SYN建立连接，之后正常传输并关闭了连接。但是第一个超时报文段只是延时很久才到，并没有丢失，在关闭之后到达，这种情况下，服务器会进行连接的建立，但是客户端并没有数据要发送，导致了资源的浪费。</p>
+<p>两次握手情况下，只有服务器对客户端的起始序列号做了确认，但客户端却没有对服务器的起始序列号做确认，不能保证传输的可靠性。</p>
+<h2 id="如何避免SYN-DDos"><a href="#如何避免SYN-DDos" class="headerlink" title="如何避免SYN DDos"></a>如何避免SYN DDos</h2><ul>
+<li>采用 SYN cookie 机制，服务器接收到SYN之后，并不知道是否是恶意攻击，因此不会打开半开连接，而是将一个秘密数，SYN源和目的IP地址与端口号进行散列函数，记录为cookie。服务器发送具有这种特殊初始序列号的SYNACK分组。<strong>服务器并不记忆该Cookie或任何对应于SYN的其他状态信息。</strong></li>
+<li>如果用户合法，会返回一个ACK报文段。服务器接收到该segment，需要确认该ACK与之前的SYN是对应的。服务器会将之前发送的SYNACK segment中的源、目的IP地址和端口号以及秘密数进行相同的散列函数。如果该散列结果+1之后与客户的SYNACK确认值相同，则认为该连接合法。</li>
+</ul>
+<h2 id="为何四次挥手"><a href="#为何四次挥手" class="headerlink" title="为何四次挥手"></a>为何四次挥手</h2><p>因为建立连接时，服务器第二次握手只需回复SYN ACK而不需要携带实际内容。而在结束过程中，服务器收到客户端发来的结束segment之后，有可能还要发送许多消息，这些消息无法放在一个segment之中，所以需要四次挥手来保证服务器的所有消息传送完毕。</p>
+<h2 id="为何结束后提出结束方还需要等待两个MSL"><a href="#为何结束后提出结束方还需要等待两个MSL" class="headerlink" title="为何结束后提出结束方还需要等待两个MSL"></a>为何结束后提出结束方还需要等待两个MSL</h2><p>MSL（segment最长生存时间 Maximum Segment Lifetime）：指segment在网络中最长生存时间，超出时间的segment会在接收后被丢弃。</p>
+<ul>
+<li>这可以保证，本次连接中的所有segment均已失活，不会出现本次连接中的segment出现在之后的网络环境中。</li>
+<li>试想这种情况：C发出了Fin segment，并且受到了对此确认，连接处于半关闭状态。之后S发出了所有segment之后也发送Fin segment，C收到之后对其作出ACK，并关闭了连接。但是最后一个ACK丢失了，此时S还处于未关闭状态，会不断在超时之后发送Fin segment，而C已经关闭了连接，不会再做出反应。导致S无法正常结束连接状态。</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1225,207 +1512,6 @@
 </ul>
 <p>事务具有原子性的特性。</p>
 <h2 id="完整性约束"><a href="#完整性约束" class="headerlink" title="完整性约束"></a>完整性约束</h2><h2 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h2><p>在关系的属性上创建的<strong>索引</strong>是一种数据结构，允许数据库系统高效地找到关系中那些在索引属性上取给定值的元组，而不需要扫描关系中的所有元组。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://sldkfjoias.github.io/2020/04/08/%E5%85%B3%E7%B3%BB%E6%95%B0%E6%8D%AE%E5%BA%93/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="张石">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="YeeHHa">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/04/08/%E5%85%B3%E7%B3%BB%E6%95%B0%E6%8D%AE%E5%BA%93/" class="post-title-link" itemprop="url">关系数据库</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-04-08 21:35:10" itemprop="dateCreated datePublished" datetime="2020-04-08T21:35:10+08:00">2020-04-08</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-04-08 16:59:43" itemprop="dateModified" datetime="2021-04-08T16:59:43+08:00">2021-04-08</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="关系数据库的结构"><a href="#关系数据库的结构" class="headerlink" title="关系数据库的结构"></a>关系数据库的结构</h2><p>关系数据库由表的集合构成，每个表有唯一的名字。<br>一般来说，表中的一行代表了一组值之间的一种联系。<br><strong>关系</strong>指代表，而<strong>元组</strong>指代行，<strong>属性</strong>指代列。<br><strong>关系实例</strong>表示一个关系的特定实例。<br>对于关系的每个属性，都存在一个允许取值的集合，成为该属性的<strong>域</strong>。如果域中的元素被看作是不可再分的单元，则域是原子的。<br>空值（<em>null</em>）是一个特殊的值，表示值未知或是不存在。  </p>
-<h2 id="数据库模式"><a href="#数据库模式" class="headerlink" title="数据库模式"></a>数据库模式</h2><p>关系模式由属性序列及各属性对应域组成。<br>例如: 一个department关系,它的关系模式是department(dept_name, building, budget)</p>
-<h2 id="码"><a href="#码" class="headerlink" title="码"></a>码</h2><ul>
-<li><strong>超码</strong>是一个或多个属性的集合, 这些属性的组合可以使我们在一个关系中唯一的标识一个元组。</li>
-<li><strong>候选码</strong>：超码之中，任何真子集都不能成为超码的最小超码，称作候选码。</li>
-<li><strong>主码</strong>：被数据库设计者选中的，用来在一个关系中区分不同元组的候选码。主码应该选择那些从不或很少发生变化的属性。一般会在关系模式中的主码属性加上下划线。</li>
-<li><strong>外码</strong>：关系模式r1的属性中包括另一个关系模式r2的主码, 这个属性在r1上被称作参照r2的外码。关系r1也称为外码依赖的参照关系，r2叫做外码的被参照关系。</li>
-<li>参照完整性约束：参照关系中任意元组在<em>特定属性</em>上的取值等于被参照关系中某个元组在特定属性上的取值。</li>
-</ul>
-<h2 id="关系查询语言"><a href="#关系查询语言" class="headerlink" title="关系查询语言"></a>关系查询语言</h2><ul>
-<li>关系代数是过程化的，即用户指导具体过程。  </li>
-<li>元组关系演算和域关系演算是非过程化的。</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://sldkfjoias.github.io/2020/04/08/SQL/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="张石">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="YeeHHa">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/04/08/SQL/" class="post-title-link" itemprop="url">SQL</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-04-08 13:42:49" itemprop="dateCreated datePublished" datetime="2020-04-08T13:42:49+08:00">2020-04-08</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-04-08 17:00:34" itemprop="dateModified" datetime="2021-04-08T17:00:34+08:00">2021-04-08</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="SQL数据定义"><a href="#SQL数据定义" class="headerlink" title="SQL数据定义"></a>SQL数据定义</h2><p>数据库中的关系集合必须由DDL指定给系统. DDL定义一组关系,同时还能定义每个关系的信息, 包括:</p>
-<ul>
-<li>每个关系的模式</li>
-<li>每个属性的取值类型</li>
-<li>完整性约束</li>
-<li>每个关系维护的索引集合</li>
-<li>每个关系的安全性和权限信息</li>
-<li>每个关系在瓷盘上的物理存储结构</li>
-</ul>
-<p>例:<br><strong>create table</strong> department<br>(<br>    dept_name <strong>varchar(20)</strong>,<br>    building <strong>varchar(15)</strong>,<br>    budget <strong>numeric(12, 2)</strong>,<br>    <strong>primary key</strong> (dept_name));</p>
-<p><strong>create table</strong> course<br>(<br>    course_id <strong>varchar(7)</strong>,<br>    title <strong>varchar(50)</strong>,<br>    dept_name <strong>varchar(20)</strong>,<br>    credits <strong>numeric(2, 0)</strong>,<br>    <strong>primary key</strong> (course_id),<br>    <strong>foreign key</strong> (dept_name) <strong>references</strong> department );</p>
-<p><strong>insert into</strong> instructor <strong>values</strong> (20211, ‘Smith’, ‘Biology’, 66000);</p>
-<p><strong>delete from</strong> student; //会删除student中的所有元组,但是会保留关系student</p>
-<p><strong>drop table</strong> student; //会删除掉关系student,在没有create之前无法再次添加元组</p>
-<p><strong>alter</strong> <strong>table</strong> r <strong>add</strong> A D; //在r中添加域为D的属性A  </p>
-<p><strong>alter table</strong> r <strong>drop</strong> A; //删除r中的属性A</p>
-<h2 id="SQL查询基本结构"><a href="#SQL查询基本结构" class="headerlink" title="SQL查询基本结构"></a>SQL查询基本结构</h2><h3 id="单关系查询"><a href="#单关系查询" class="headerlink" title="单关系查询"></a>单关系查询</h3><p><strong>select</strong> <strong>(distinct/all)</strong> name <strong>from</strong> instructor;  </p>
-<p><strong>select</strong> name<br><strong>from</strong> instructor<br><strong>where</strong> dept_name = ‘Comp.Sci’ <strong>and</strong> salary &gt; 70000 ;</p>
-<h3 id="多关系查询"><a href="#多关系查询" class="headerlink" title="多关系查询"></a>多关系查询</h3><p><strong>select</strong> name, instructor.dept_name, building<br><strong>from</strong> instructor, department<br><strong>where</strong> instrctor.dept_name = department.dept_name ;<br>其中from会生成几个关系的笛卡尔乘积,之后通过where所对应的谓词选择相应的元组，最后select选择出所需的属性。</p>
-<h3 id="自然连接"><a href="#自然连接" class="headerlink" title="自然连接"></a>自然连接</h3><p>例：<strong>select</strong> name, course_id <strong>from</strong> instructor <strong>natural</strong> <strong>join</strong> teaches;</p>
-<p>生成的结果首先会列出二者的共同属性,之后是只出现在第一个关系中的属性,最后是只出现在第二个关系中的属性。</p>
-<p>更为一般的<br><strong>select</strong> A, B, C, D…<br><strong>from</strong> r1 <strong>natural join</strong> r2 <strong>natural oin</strong> r3 …. <strong>natural join</strong> rm<br><strong>where</strong> P;</p>
-<p>同时, 为了发扬自然连接的优势, 并且能够避免不必要的相等属性所做出的限制, SQL提供了允许用户制定哪些列相等自然连接构造方式  </p>
-<p><strong>select</strong> name, title<br><strong>from</strong> (instructor <strong>natural join</strong> teaches ) <strong>join</strong> course <strong>using</strong> (course_id) ;<br>//instructor和teaches自然连接,之后与course建立连接,不过只要求course_id取值相同</p>
-<h3 id="附加操作"><a href="#附加操作" class="headerlink" title="附加操作"></a>附加操作</h3><h4 id="更名运算"><a href="#更名运算" class="headerlink" title="更名运算"></a>更名运算</h4><p><strong>select</strong> T.name, S.course_id<br><strong>from</strong> instructor <strong>as</strong> T, teaches <strong>as</strong> S<br><strong>where</strong> T.ID = S.ID ;</p>
-<p>重命名关系的另一个作用是为了适用于需要比较同一个关系中的元组的情况。例如，找出满足下面条件的所有教师的姓名，他们的工资至少比Biology系某一个教师的工资要高。<br><strong>select distinct</strong> T.name<br><strong>from</strong> instructor <strong>as</strong> T, instructor <strong>as</strong> S<br><strong>where</strong> T.salary &gt; S.salary <strong>and</strong> S.dept_name = ‘Biology’;<br>不能简单地使用instructor因为无法表明是拿一个instructor。</p>
-<h4 id="字符串操作"><a href="#字符串操作" class="headerlink" title="字符串操作"></a>字符串操作</h4><ul>
-<li>%可以适配任意字符串</li>
-<li>_可以适配任意一个字符</li>
-<li>通过‘\’作为转义字符, 可以表达原本的含义, 如 ‘\%’ ‘\_’ ‘\\‘  </li>
-</ul>
-<p>例:<br><strong>select</strong> dept_name<br><strong>from</strong> department<br><strong>where</strong> building <strong>like</strong> ‘%Watson%’ ;<br>可以选择出所有所在大楼名字中包含Waston的系名字</p>
-<h4 id="排列元组的显示次序"><a href="#排列元组的显示次序" class="headerlink" title="排列元组的显示次序"></a>排列元组的显示次序</h4><p><strong>select</strong> name<br><strong>from</strong> instructor<br><strong>where</strong> dept_name = ‘Physics’<br><strong>order by</strong> salary <strong>desc</strong>, name <strong>asc</strong>;<br><strong>desc</strong> 标识降序排列 <strong>asc</strong> 表示升序排列</p>
-<h3 id="空值"><a href="#空值" class="headerlink" title="空值"></a>空值</h3><p>涉及空值的任何运算, 比较的结果都是unknown(包括null = null)<br>SQL允许使用is unknown / is not unknown来测试表达式的结果是否为unknown</p>
-<ul>
-<li>and: true and unknown == unknown,<br>false and unknown == false,<br>unknown and unknown == unknown</li>
-<li>or: true or unknown == true,<br>false or unknown == unknown,<br>unknown or unknown == unknown</li>
-<li>not: not unknown == unknown</li>
-</ul>
-<p>{(‘A’, null) , (‘A’, null)} 中的两个(‘A’, null) 会被视为相同的元组,如果使用distinct 只会保留一个元组， 而all会将二者保留</p>
-<h3 id="聚集函数-group-by"><a href="#聚集函数-group-by" class="headerlink" title="聚集函数(group by)"></a>聚集函数(group by)</h3><ul>
-<li>min</li>
-<li>max</li>
-<li>count</li>
-<li>avg</li>
-<li>sum</li>
-</ul>
-<p>having子句会在聚集函数之后进行判断</p>
 
       
     </div>
