@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"sldkfjoias.github.io","root":"/","images":"/images","scheme":"Pisces","version":"8.3.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
+  </script>
+<meta name="description" content="之前几个Effective C++的笔记里面记录了不少跟智能指针有关的知识，但多少还不是很统一、详细，所以单独抽出来写一个有关智能指针的总结。  现代C++编程中，标准库包含智能指针，通过#inlcude&lt;memory&gt;引入，这些指针可以用于帮助确保程序不会出现内存和资源泄露，并具有异常安全。 如今弃用了容易引起歧义的auto_ptr，这东西之前写过，跟正常思路不一样。复制它会导致被复">
+<meta property="og:type" content="article">
+<meta property="og:title" content="几个智能指针的知识总结">
+<meta property="og:url" content="https://sldkfjoias.github.io/2021/05/17/smart-pointers/index.html">
+<meta property="og:site_name" content="YeeHHa">
+<meta property="og:description" content="之前几个Effective C++的笔记里面记录了不少跟智能指针有关的知识，但多少还不是很统一、详细，所以单独抽出来写一个有关智能指针的总结。  现代C++编程中，标准库包含智能指针，通过#inlcude&lt;memory&gt;引入，这些指针可以用于帮助确保程序不会出现内存和资源泄露，并具有异常安全。 如今弃用了容易引起歧义的auto_ptr，这东西之前写过，跟正常思路不一样。复制它会导致被复">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-05-17T07:02:56.000Z">
+<meta property="article:modified_time" content="2021-05-17T09:34:56.167Z">
+<meta property="article:author" content="张石">
+<meta property="article:tag" content="C++">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://sldkfjoias.github.io/2021/05/17/smart-pointers/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>几个智能指针的知识总结 | YeeHHa</title>
+  
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">YeeHHa</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">让我们做点年轻人该做的事吧</p>
+      <img class="custom-logo-image" src="/uploads/custom-logo.jpg" alt="YeeHHa">
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#unique-ptr"><span class="nav-number">1.</span> <span class="nav-text">unique_ptr</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E4%BA%8Eunique-ptr%E7%9A%84release"><span class="nav-number">1.1.</span> <span class="nav-text">关于unique_ptr的release()</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#shared-ptr"><span class="nav-number">2.</span> <span class="nav-text">shared_ptr</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#weak-ptr"><span class="nav-number">3.</span> <span class="nav-text">weak_ptr</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#weak-ptr%E6%B2%A1%E6%9C%89-%E5%92%8C-gt"><span class="nav-number">3.1.</span> <span class="nav-text">weak_ptr没有*和-&gt;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%E5%87%A0%E4%B8%AA%E9%87%8D%E8%A6%81%E9%97%AE%E9%A2%98"><span class="nav-number">4.</span> <span class="nav-text">智能指针几个重要问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E8%A6%81%E6%8A%8A%E4%B8%80%E4%B8%AAraw%E6%8C%87%E9%92%88%E5%90%8C%E6%97%B6%E4%BA%A4%E7%BB%99%E5%A4%9A%E4%B8%AA%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%E7%AE%A1%E7%90%86"><span class="nav-number">4.1.</span> <span class="nav-text">不要把一个raw指针同时交给多个智能指针管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E8%A6%81%E5%B0%86this%E6%8C%87%E9%92%88%E4%BA%A4%E7%BB%99%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%E7%AE%A1%E7%90%86"><span class="nav-number">4.2.</span> <span class="nav-text">不要将this指针交给智能指针管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E6%98%AF%E9%80%9A%E8%BF%87new%E6%88%96%E8%80%85%E9%87%8D%E8%BD%BD%E4%BA%86new%E7%9A%84%E5%8A%A8%E6%80%81%E8%B5%84%E6%BA%90%E9%9C%80%E8%A6%81%E9%87%8D%E8%BD%BD%E5%88%A0%E9%99%A4%E5%99%A8"><span class="nav-number">4.3.</span> <span class="nav-text">不是通过new或者重载了new的动态资源需要重载删除器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%BD%E9%87%8F%E4%B8%8D%E4%BD%BF%E7%94%A8get"><span class="nav-number">4.4.</span> <span class="nav-text">尽量不使用get()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%BD%E9%87%8F%E4%BD%BF%E7%94%A8make-shared%EF%BC%8C%E8%80%8C%E4%B8%8D%E5%B0%86%E5%8E%9F%E7%94%9F%E6%8C%87%E9%92%88%E6%9A%B4%E9%9C%B2"><span class="nav-number">4.5.</span> <span class="nav-text">尽量使用make_shared，而不将原生指针暴露</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">张石</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://sldkfjoias.github.io/2021/05/17/smart-pointers/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="张石">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YeeHHa">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          几个智能指针的知识总结
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-05-17 15:02:56 / 修改时间：17:34:56" itemprop="dateCreated datePublished" datetime="2021-05-17T15:02:56+08:00">2021-05-17</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><em>之前几个Effective C++的笔记里面记录了不少跟智能指针有关的知识，但多少还不是很统一、详细，所以单独抽出来写一个有关智能指针的总结。</em></p>
+<hr>
+<p>现代C++编程中，标准库包含智能指针，通过<code>#inlcude&lt;memory&gt;</code>引入，这些指针可以用于帮助确保程序不会出现内存和资源泄露，并具有异常安全。</p>
+<p><em>如今弃用了容易引起歧义的auto_ptr，这东西之前写过，跟正常思路不一样。复制它会导致被复制指针指向nullptr，还会引起内存泄漏，不能跟STL联用，反正都被放弃使用了就不细说了。C++11使用unique_ptr替代了这东西。</em></p>
+<blockquote>
+<p>使用智能指针的时候牢记EffectiveC++#17：以独立语句将newed对象置入智能指针，避免因为参数顺序引起内存泄漏。如<code>processWidget(shared_ptr&lt;Widget&gt;(new Widget), priority())</code>可能先new出了一个对象，之后priority()抛出一个异常，就导致这个Widget没有进入智能指针管理范围，从而引出内存泄漏。</p>
+</blockquote>
+<p>接下来，顺着讲吧</p>
+<h2 id="unique-ptr"><a href="#unique-ptr" class="headerlink" title="unique_ptr"></a>unique_ptr</h2><p><code>unique_ptr</code>是一种独占的智能指针，它可以移到新所有者，但禁止其他智能指针与其共同指向一个对象。并且unique_ptr可以用于STL容器，将<code>unique_ptr</code>实例添加到STL容器运行的效率很高，因为通过<code>unique_ptr</code>的移动构造函数不需要再进行复制操作。替代掉了之前的<code>auto_ptr</code>。</p>
+<blockquote>
+<p>插一嘴看起来很重要的：除非你确信需要使用<code>shared_ptr</code>，否则请使用<code>unique_ptr</code>！因为shared_ptr的开销更大，一个指针用于对象，另一个用于包含引用计数的共享控制块。</p>
+</blockquote>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">unique_ptr&lt;<span class="keyword">int</span>&gt; p = make_unique&lt;<span class="keyword">int</span>&gt;(<span class="number">10</span>); <span class="comment">//C++14才实现，委员会说他们当时忘了哈哈哈哈</span></span><br><span class="line">unique_ptr&lt;<span class="keyword">int</span>&gt; p2 = p;<span class="comment">//非法操作！</span></span><br></pre></td></tr></table></figure>
+<p>C++11没有提供<code>make_unique</code>，但是可以自己实现一个：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> ...Args&gt;</span><br><span class="line"><span class="function">unique_ptr&lt;T&gt; <span class="title">make_unique</span><span class="params">(Args&amp;&amp; ...args)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> std::unique_ptr&lt;T&gt; ( <span class="keyword">new</span> <span class="built_in">T</span>(std::forward&lt;Args&gt;(args)...));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>因为是独占，所以unique_ptr并不能复制，不过可以通过<code>std::move</code>将其转移给一个新所有者，例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;memory&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Foo</span>&#123;</span></span><br><span class="line">    <span class="built_in">Foo</span>() &#123; cout&lt;&lt; <span class="string">&quot;Foo::Foo&quot;</span> &lt;&lt; endl; &#125;</span><br><span class="line">    ~<span class="built_in">Foo</span>() &#123; cout&lt;&lt; <span class="string">&quot;Foo::Foo&quot;</span> &lt;&lt; endl; &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">foo</span><span class="params">()</span> </span>&#123;cout&lt;&lt; <span class="string">&quot;Foo::foo&quot;</span> &lt;&lt; endl; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">f</span><span class="params">(<span class="keyword">const</span> Foo &amp;)</span></span>&#123;</span><br><span class="line">    cout&lt;&lt; <span class="string">&quot;f(const Foo&amp;)&quot;</span> &lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="function">unique_ptr&lt;Foo&gt; <span class="title">p1</span><span class="params">(make_unique&lt;Foo&gt;())</span></span>;</span><br><span class="line">    <span class="keyword">if</span>(p1) &#123; p1 -&gt; <span class="built_in">foo</span>(); &#125; <span class="comment">//p1 != nullptr</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="function">unique_ptr&lt;Foo&gt; <span class="title">p2</span><span class="params">(move(p1))</span></span>;</span><br><span class="line">        <span class="built_in">f</span>(*p2); <span class="comment">//存在输出</span></span><br><span class="line">        <span class="keyword">if</span>(p2) p2 -&gt; <span class="built_in">foo</span>(); <span class="comment">//p2有输出</span></span><br><span class="line">        <span class="keyword">if</span>(p1) p1 -&gt; <span class="built_in">foo</span>(); <span class="comment">//p1 == nullptr 无输出</span></span><br><span class="line">        p1 = <span class="built_in">move</span>(p2); <span class="comment">//p1 != nullptr</span></span><br><span class="line">        <span class="keyword">if</span>(p2) p2 -&gt; <span class="built_in">foo</span>(); <span class="comment">//p2 == nullptr</span></span><br><span class="line">        cout&lt;&lt; <span class="string">&quot;p2 is deleted&quot;</span> &lt;&lt; endl;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(p1) p1 -&gt; <span class="built_in">foo</span>(); <span class="comment">//p1 != nullptr 有输出</span></span><br><span class="line">    <span class="comment">//~Foo()会被调用</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="关于unique-ptr的release"><a href="#关于unique-ptr的release" class="headerlink" title="关于unique_ptr的release()"></a>关于unique_ptr的release()</h3><p>这个<code>release()</code>一开始我以为就是把那个指针置空，然后销毁被指向对象。但是这就跟别的<code>reset()</code>不一致了，而且看起来有点多余，这东西跟想的还真不一样。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> p = make_unique&lt;<span class="keyword">int</span>&gt;(<span class="number">12</span>);</span><br><span class="line">p.<span class="built_in">release</span>() <span class="comment">//memory leak</span></span><br></pre></td></tr></table></figure>
+<p>上述代码存在着内存泄漏的问题。因为<code>release()</code>的目的根本就不是将<code>unique_ptr</code>置空，这个还是<code>reset()</code>去做的事。<code>release()</code>之后被指向对象并不会被销毁，而是变成一个..呃..怎么叫？孤儿对象？我就这么叫吧。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> p = make_unique&lt;<span class="keyword">int</span>&gt;(<span class="number">12</span>);</span><br><span class="line"><span class="keyword">int</span> *raw_p = p.<span class="built_in">release</span>();</span><br><span class="line"><span class="keyword">delete</span> raw_p;</span><br></pre></td></tr></table></figure>
+<p>这才是<code>release()</code>的用法，也正如<code>stackoverflow</code>所说，除非有一个很好的理由支持你去使用这种原始指针，否则别碰<code>release()</code>，<em>印象里好像服务器，操作系统这块可能会用到吧。</em></p>
+<h2 id="shared-ptr"><a href="#shared-ptr" class="headerlink" title="shared_ptr"></a>shared_ptr</h2><p>shared_ptr，一个能够记录当前引用数的指针，当引用计数变为0的时候，会自动对所指对象调用delete，释放内存。</p>
+<p>shared_ptr可以使用<code>make_shared&lt;ClassName&gt;()</code>来实现构造，并返回这个对象类型的<code>shared_ptr</code>指针。例如：<code>auto p = maked_shared&lt;ClassName&gt;(0)</code>。shared_ptr可以通过<code>get()</code>方法来获得原始指针，使用<code>reset()</code>来减少一个引用计数，使用<code>use_count()</code>来查看一个对象的引用计数。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">auto</span> p = make_shared&lt;<span class="keyword">int</span>&gt;(<span class="number">10</span>); <span class="comment">//cnt = 1</span></span><br><span class="line"><span class="keyword">auto</span> p2 = p; <span class="comment">//cnt+1</span></span><br><span class="line"><span class="keyword">auto</span> p3 = p; <span class="comment">//cnt+1</span></span><br><span class="line"><span class="keyword">int</span> *raw_p = p.<span class="built_in">get</span>(); <span class="comment">//引用计数不会增加！</span></span><br><span class="line">cout&lt;&lt; <span class="string">&quot;p.use_count() is &quot;</span>&lt;&lt; p.<span class="built_in">use_count</span>() &lt;&lt; endl; <span class="comment">//3</span></span><br><span class="line">cout&lt;&lt; <span class="string">&quot;p2.use_count() is &quot;</span>&lt;&lt; p2.<span class="built_in">use_count</span>() &lt;&lt; endl; <span class="comment">//3</span></span><br><span class="line">cout&lt;&lt; <span class="string">&quot;p3.use_count() is &quot;</span>&lt;&lt; p3.<span class="built_in">use_count</span>() &lt;&lt; endl; <span class="comment">//3</span></span><br><span class="line"></span><br><span class="line">p2.<span class="built_in">reset</span>(); <span class="comment">//p2 is nullptr</span></span><br><span class="line"><span class="keyword">if</span>(p2 == <span class="literal">nullptr</span>) cout&lt;&lt;<span class="string">&quot;p2 is nullptr now&quot;</span>; </span><br><span class="line">cout&lt;&lt; <span class="string">&quot;p.use_count() is &quot;</span>&lt;&lt; p.<span class="built_in">use_count</span>() &lt;&lt; endl; <span class="comment">//2</span></span><br><span class="line">cout&lt;&lt; <span class="string">&quot;p2.use_count() is &quot;</span>&lt;&lt; p2.<span class="built_in">use_count</span>() &lt;&lt; endl; <span class="comment">//0</span></span><br><span class="line">cout&lt;&lt; <span class="string">&quot;p3.use_count() is &quot;</span>&lt;&lt; p3.<span class="built_in">use_count</span>() &lt;&lt; endl; <span class="comment">//2</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="weak-ptr"><a href="#weak-ptr" class="headerlink" title="weak_ptr"></a>weak_ptr</h2><p>这个指针是结合<code>shared_ptr</code>使用的特例智能指针。<code>weak_ptr</code>提供对一个或多个<code>shared_ptr</code>所指对象的访问，但不参与引用计数。如果只想对一个对象保持监测，但不需要保持其活动状态，可以用这个。并且<code>weak_ptr</code>可以解决<code>shared_ptr</code>无法解决的一个问题：循环引用。</p>
+<p>举个例子:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">A</span>;</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">B</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">A</span>&#123;</span></span><br><span class="line">    shared_ptr&lt;B&gt; pointer;</span><br><span class="line">    ~<span class="built_in">A</span>()&#123;</span><br><span class="line">        cout&lt;&lt; <span class="string">&quot;A is destruct &quot;</span>&lt;&lt;endl;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">B</span>&#123;</span></span><br><span class="line">    shared_ptr&lt;A&gt; pointer;</span><br><span class="line">    ~<span class="built_in">B</span>()&#123;</span><br><span class="line">        cout&lt;&lt; <span class="string">&quot;B is destruct &quot;</span>&lt;&lt;endl;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">auto</span> a = make_shared&lt;A&gt;();</span><br><span class="line">    <span class="keyword">auto</span> b = make_shared&lt;B&gt;();</span><br><span class="line">    a -&gt; pointer = b;</span><br><span class="line">    b -&gt; pointer = a;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>结果就是，两个对象a,b都不会被销毁，因为发生了循环引用，<code>a -&gt; pointer = b</code>使b的<code>use_count()</code>变成了2，另一个同理，所以离开作用域时，两个智能指针<code>a和b</code>调用析构，<code>use_count()</code>减一，但仍不为0，所以两块内存均未被销毁，发生了内存泄漏。一个解决办法就是使用<code>weak_ptr</code></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">···</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">A</span>&#123;</span></span><br><span class="line">    weak_ptr&lt;B&gt; pointer;</span><br><span class="line">    ~<span class="built_in">A</span>()&#123;</span><br><span class="line">        cout&lt;&lt; <span class="string">&quot;A is destruct &quot;</span>&lt;&lt;endl;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">B</span>&#123;</span></span><br><span class="line">    weak_ptr&lt;A&gt; pointer;</span><br><span class="line">    ~<span class="built_in">B</span>()&#123;</span><br><span class="line">        cout&lt;&lt; <span class="string">&quot;B is destruct &quot;</span>&lt;&lt;endl;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line">···</span><br></pre></td></tr></table></figure>
+<p>这样修改过后两个对象都可以被正常销毁。</p>
+<h3 id="weak-ptr没有-和-gt"><a href="#weak-ptr没有-和-gt" class="headerlink" title="weak_ptr没有*和-&gt;"></a>weak_ptr没有*和-&gt;</h3><p>因为<code>weak_ptr</code>没有<code>*</code>和<code>-&gt;</code>，所以不能用来对资源进行操作，它的唯一作用就是用于检查<code>shared_ptr</code>是否存在。</p>
+<ol>
+<li><code>expired()</code>方法能在资源未被释放时返回<code>false</code>，反之返回<code>true</code>。等价于<code>weak_ptr.use_count() == 0</code></li>
+<li><code>lock()</code>方法会在<code>weak_ptr</code>过期时返回一个空的<code>shared_ptr</code>指针；如果尚未过期，则返回一个和当前<code>weak_ptr</code>指向相同的<code>shared_ptr</code>指针。</li>
+</ol>
+<h2 id="智能指针几个重要问题"><a href="#智能指针几个重要问题" class="headerlink" title="智能指针几个重要问题"></a>智能指针几个重要问题</h2><h3 id="不要把一个raw指针同时交给多个智能指针管理"><a href="#不要把一个raw指针同时交给多个智能指针管理" class="headerlink" title="不要把一个raw指针同时交给多个智能指针管理"></a>不要把一个raw指针同时交给多个智能指针管理</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> *p = <span class="keyword">new</span> <span class="built_in"><span class="keyword">int</span></span>(<span class="number">0</span>);</span><br><span class="line"><span class="function">shared_ptr&lt;<span class="keyword">int</span>&gt; <span class="title">p1</span><span class="params">(p)</span></span>;</span><br><span class="line"><span class="function">shared_ptr&lt;<span class="keyword">int</span>&gt; <span class="title">p2</span><span class="params">(p)</span></span>;</span><br><span class="line"><span class="comment">//离开作用域时，同一部分内存会被销毁两次</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="不要将this指针交给智能指针管理"><a href="#不要将this指针交给智能指针管理" class="headerlink" title="不要将this指针交给智能指针管理"></a>不要将this指针交给智能指针管理</h3><p>简单来说就是，如果你把this用智能指针给管理了，外面又用的是智能指针，那么显然就违反了上面说的不要把一个指针同时交给多个智能指针管理。<em>不要交给两个智能指针管理指是：将raw指针直接给两个这种智能指针，两个智能指针互相不知道的情况下进行管理。</em></p>
+<h3 id="不是通过new或者重载了new的动态资源需要重载删除器"><a href="#不是通过new或者重载了new的动态资源需要重载删除器" class="headerlink" title="不是通过new或者重载了new的动态资源需要重载删除器"></a>不是通过new或者重载了new的动态资源需要重载删除器</h3><h3 id="尽量不使用get"><a href="#尽量不使用get" class="headerlink" title="尽量不使用get()"></a>尽量不使用get()</h3><p>使用了智能指针，那么唯一管理对象就应该是智能指针。即使使用了<code>get()</code>，也不能用得到的raw指针进行管理，只能拥有使用权。</p>
+<h3 id="尽量使用make-shared，而不将原生指针暴露"><a href="#尽量使用make-shared，而不将原生指针暴露" class="headerlink" title="尽量使用make_shared，而不将原生指针暴露"></a>尽量使用make_shared，而不将原生指针暴露</h3>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/C/" rel="tag"># C++</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/05/13/addWithOut/" rel="prev" title="不用加减乘除实现加法">
+                  <i class="fa fa-chevron-left"></i> 不用加减乘除实现加法
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">张石</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.1.0/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink.listen({
+        timeout : 500,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://sldkfjoias.github.io/2021/05/17/smart-pointers/',]
+      });
+      });
+  </script>
+
+</body>
+</html>

@@ -172,7 +172,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-count">25</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -208,6 +208,195 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://sldkfjoias.github.io/2021/03/16/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3C++%E5%AF%B9%E8%B1%A1%E6%A8%A1%E5%9E%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="张石">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YeeHHa">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/03/16/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3C++%E5%AF%B9%E8%B1%A1%E6%A8%A1%E5%9E%8B/" class="post-title-link" itemprop="url">深入理解C++对象模型</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-03-16 15:40:49" itemprop="dateCreated datePublished" datetime="2021-03-16T15:40:49+08:00">2021-03-16</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-04-08 16:38:06" itemprop="dateModified" datetime="2021-04-08T16:38:06+08:00">2021-04-08</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="第二章-构造函数语义学"><a href="#第二章-构造函数语义学" class="headerlink" title="第二章 构造函数语义学"></a>第二章 构造函数语义学</h1><h2 id="带Default-Constructor的Member-class-object"><a href="#带Default-Constructor的Member-class-object" class="headerlink" title="带Default Constructor的Member class object"></a>带Default Constructor的Member class object</h2><ol>
+<li>如果<code>class A</code>内含一个或一个以上的<code>member class objects</code>那么<code>class A</code>的每一个<code>constructor</code>必须调用每一个<code>member classes</code>的<code>default constructor</code>。编译器会扩张已存在的<code>constructors</code>，在其中安插一些代码，使得<code>user code</code>被执行之前，先调用必要的<code>default constructors</code>。例如：<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Foo</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">Foo</span>();</span><br><span class="line">    <span class="built_in">Foo</span>(<span class="keyword">int</span> );</span><br><span class="line">    ···</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Bar</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    Foo foo;</span><br><span class="line">    <span class="keyword">char</span> *str;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">foo_bar</span><span class="params">()</span></span>&#123;</span><br><span class="line">    Bar bar; <span class="comment">//Bar::foo必须在此初始化</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(str)&#123;</span><br><span class="line">        ···</span><br><span class="line">    &#125;</span><br><span class="line">    ···</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Bar::<span class="built_in">Bar</span>()&#123; <span class="comment">//程序员定义的default constructor</span></span><br><span class="line">    str = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+上述代码会被自动扩张为<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//扩张后的default constructor伪码</span></span><br><span class="line">Bar::<span class="built_in">Bar</span>()&#123;</span><br><span class="line">    foo.Foo::<span class="built_in">Foo</span>();</span><br><span class="line">    str = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>如果有多个<code>class member objects</code>都需要<code>constructor</code>初始化操作，C++以<code>member objects</code>在<code>class</code>中的声明顺序来调用各个<code>constructors</code></li>
+</ol>
+<h2 id="带有Default-Constructor的Base-Class"><a href="#带有Default-Constructor的Base-Class" class="headerlink" title="带有Default Constructor的Base Class"></a>带有Default Constructor的Base Class</h2><ol>
+<li><p>如果一个没有任何<code>constructor</code>的<code>class</code>派生自一个带有<code>default constructor</code>的<code>base class</code>，则这个派生类会合成一个默认构造函数，它将根据其声明顺序调用上一层<code>base classes</code>的<code>default constructor</code>。</p>
+</li>
+<li><p>如果设计者提供了多个<code>constructors</code>，但其中都没有<code>default constructor</code>，编译器会扩张每一个<code>constructors</code>，将必要的构造代码添加进去。</p>
+</li>
+</ol>
+<h2 id="带有一个Virtual-Function的Class"><a href="#带有一个Virtual-Function的Class" class="headerlink" title="带有一个Virtual Function的Class"></a>带有一个Virtual Function的Class</h2><p>另外两种需要合成出<code>default constructor</code>:</p>
+<ol>
+<li><code>class</code>声明（或继承）一个<code>virtual function</code></li>
+<li><code>class</code>派生自一个继承串链，其中有一个或更多的<code>virtual base classes</code></li>
+</ol>
+<p>编译器会为每一个带<code>virtual function</code>的<code>class</code>合成一个默认构造函数，以便正确的初始化每一个<code>class object</code>的<code>vptr</code></p>
+<h2 id="带有一个Virtual-Base-Class的Class"><a href="#带有一个Virtual-Base-Class的Class" class="headerlink" title="带有一个Virtual Base Class的Class"></a>带有一个Virtual Base Class的Class</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">X</span> &#123;</span> <span class="keyword">public</span> : <span class="keyword">int</span> i; &#125;;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span> :</span> <span class="keyword">public</span> <span class="keyword">virtual</span> X &#123; <span class="keyword">public</span> : <span class="keyword">int</span> j ;&#125;;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span> :</span> <span class="keyword">public</span> <span class="keyword">virtual</span> X &#123; <span class="keyword">public</span> : <span class="keyword">double</span> d; &#125;;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">C</span> :</span> <span class="keyword">public</span> A, <span class="keyword">public</span> B &#123; <span class="keyword">public</span> : <span class="keyword">int</span> k; &#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">foo</span> <span class="params">(<span class="keyword">const</span> A* pa )</span> </span>&#123; pa -&gt; i = <span class="number">1024</span>; &#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">main</span>()&#123;</span><br><span class="line">    <span class="built_in">foo</span>(<span class="keyword">new</span> A);</span><br><span class="line">    <span class="built_in">foo</span>(<span class="keyword">new</span> C);</span><br><span class="line">    ···</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>因为<code>pa</code>的真正类型可以改变，编译器无法确定<code>foo()</code>中<code>X::i</code>的实际位置，因此编译器必须改变“执行存取操作”地那些代码，使<code>X::i</code>可以延迟到执行期才决定下来。比如上述例子中，<code>foo()</code>可以被该写成：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">foo</span><span class="params">(<span class="keyword">const</span> A* pa)</span> </span>&#123; pa -&gt; __vbcX -&gt; i = <span class="number">1024</span>; &#125;</span><br></pre></td></tr></table></figure>
+<p>其中<code>__vbcX</code>表示编译器所产生的指针，指向<code>virtual base class X</code>。<code>__vbcX</code>是在<code>class object</code>构造期间被完成的。对于<code>class</code>的每一个<code>constructor</code>，编译器都会安插这种“允许每一个<code>virtual base class</code>的执行期存取操作”的代码。如果<code>class</code>没有声明任何<code>constructor</code>，编译器会为其合成一个默认构造函数。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>上述四种情况下，编译器会为未声明<code>constructor</code>的<code>class</code>合成一个<code>default constructor</code>。</p>
+<p>两个常见误解：</p>
+<ul>
+<li>任何<code>class</code>如果没有<code>default constructor</code>，就会被合成一个出来</li>
+<li>编译器合成出来的<code>default constructor</code>会显示设定“<code>class</code>内每一个<code>data member</code>的默认值”</li>
+</ul>
+<p>上述两条均<strong>不正确</strong>。</p>
+<h1 id="copy-constructor的构造操作"><a href="#copy-constructor的构造操作" class="headerlink" title="copy constructor的构造操作"></a>copy constructor的构造操作</h1><p>当设计者显示定义了一个<code>copy constructor</code>，如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//user-defined copy constructor 的实例</span></span><br><span class="line"><span class="comment">//可以是多参数形式，其第二参数及后继参数以一个默认值供应</span></span><br><span class="line">X::<span class="built_in">X</span>( <span class="keyword">const</span> X&amp; x);</span><br><span class="line">Y::<span class="built_in">Y</span>( <span class="keyword">const</span> Y&amp; y, <span class="keyword">int</span> = <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+<p>则在大多数情况下，当一个<code>class object</code>以另一个同类实例作为初值，上述的<code>constructor</code>会被调用。</p>
+<h2 id="Default-Memberwise-Initialization"><a href="#Default-Memberwise-Initialization" class="headerlink" title="Default Memberwise Initialization"></a>Default Memberwise Initialization</h2><p>如果类没有显式提供一个拷贝构造函数，<code>class object</code>以“相同<code>class</code>的另一个<code>object</code>”作为初值，就会以默认拷贝构造函数执行，把其每一个内部<code>data member</code>都拷贝一份，不过**并不拷贝<code>member class object</code>**，而是递归的调用<code>memberwise initialization</code></p>
+<h2 id="Bitwise-Copy-Semantics"><a href="#Bitwise-Copy-Semantics" class="headerlink" title="Bitwise Copy Semantics"></a>Bitwise Copy Semantics</h2><p>有4种情况，一个<code>class</code>不会展现出<code>bitwise copy semantics</code>：</p>
+<ol>
+<li>当<code>class</code>内含一个<code>member object</code>，而后者的<code>class</code>声明有一个<code>copy constructor</code>（不论是被<code>class</code>设计者显式声明还是编译器合成的）</li>
+<li>当<code>class</code>继承自一个<code>base class</code>，而后者存在一个<code>copy constructor</code>时（同样不论是声明的还是合成的）</li>
+<li>当<code>class</code>声明了一个或多个<code>virtual functions</code>时</li>
+<li>当<code>class</code>派生自一个继承串链，其中有一个或多个<code>virtual base classes</code>时。</li>
+</ol>
+<h2 id="重新设定Virtual-Table指针"><a href="#重新设定Virtual-Table指针" class="headerlink" title="重新设定Virtual Table指针"></a>重新设定<code>Virtual Table</code>指针</h2><p>编译期间，只要有一个<code>class</code>声明了一个或多个<code>virtual function</code>，就会有两个程序扩张操作：</p>
+<ul>
+<li>增加一个<code>virtual functuin table</code>，内含每一个有作用的<code>virtual function</code>的地址</li>
+<li>一个指向<code>virtual function table</code>的指针，安插在每一个<code>class object</code>内</li>
+</ul>
+<p>当编译器导入一个<code>vptr</code>到<code>class</code>之中时，该<code>class</code>就不再展现<code>bitwise semantics</code>，编译器便需要合成出一个<code>copy constructor</code>以求将<code>vptr</code>适当地初始化。<br>例如：<code>ZooAnimal</code>的衍生类<code>Bear</code>，令<code>ZooAnimal = Bear;</code>，则会发生<code>sliced</code>，同时，编译器合成一个拷贝构造函数，使<code>ZooAnimal</code>的<code>vptr</code>指向<code>ZooAnimal</code>的<code>vtb</code>，而不是<code>Bear</code>的<code>vtb</code>。</p>
+<h2 id="处理Virtual-Base-Class-Subobject（待补充！）"><a href="#处理Virtual-Base-Class-Subobject（待补充！）" class="headerlink" title="处理Virtual Base Class Subobject（待补充！）"></a>处理Virtual Base Class Subobject（待补充！）</h2><h2 id="参数的初始化"><a href="#参数的初始化" class="headerlink" title="参数的初始化"></a>参数的初始化</h2><p>把一个<code>class object</code>当做参数传给一个函数（或是作为一个函数的返回值），相当于：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//原始</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">foo</span><span class="params">(X x0)</span></span>;</span><br><span class="line">X xx;</span><br><span class="line">···</span><br><span class="line"><span class="built_in">foo</span>(xx); <span class="comment">//相当于以下效果</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//编译器产生的C++伪码</span></span><br><span class="line">X __temp0;</span><br><span class="line"></span><br><span class="line">__temp0.X::<span class="built_in">X</span>(xx);</span><br><span class="line"></span><br><span class="line"><span class="built_in">foo</span>( __temp0 ); <span class="comment">//foo(X x0)被改变为 foo(X&amp; x0)</span></span><br></pre></td></tr></table></figure>
+<p>同时，<code>foo(X xo);</code>的声明也被重新改编为<code>foo(X&amp; x0);</code></p>
+<h2 id="返回值的初始化"><a href="#返回值的初始化" class="headerlink" title="返回值的初始化"></a>返回值的初始化</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">X <span class="title">bar</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    X xx;</span><br><span class="line">    <span class="comment">//处理 xx ...</span></span><br><span class="line">    <span class="keyword">return</span> xx;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>关于返回值如何从局部对象xx中拷贝过来，是一个两阶段过程：</p>
+<ol>
+<li>首先加上一个额外参数，类型是<code>reference to class object</code>这个参数被用来放置“拷贝建构”而得的返回值。</li>
+<li>在<code>return</code>指令之前安插一个<code>copy constructor</code>调用操作，将欲传回的<code>object</code>的内容当做上述新增参数的初值。</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//函数转换cpp伪码</span></span><br><span class="line"><span class="keyword">void</span></span><br><span class="line"><span class="built_in">bar</span>( X&amp; __result ) <span class="comment">//这是个新增的额外参数</span></span><br><span class="line">&#123;</span><br><span class="line">    X xx;</span><br><span class="line">    <span class="comment">//编译器产生的default constructor调用操作</span></span><br><span class="line">    xx.X::<span class="built_in">X</span>();</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//·····处理xx</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">//编译器产生的copy constructor调用操作</span></span><br><span class="line">    __result.X::<span class="built_in">XX</span>(xx);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>类似</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">bar</span>().<span class="built_in">memfunc</span>();</span><br></pre></td></tr></table></figure>
+<p>的可能会被转化为</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">X __temp0;</span><br><span class="line">(<span class="built_in">bar</span>(__temp0), __temp0).<span class="built_in">memfunc</span>();</span><br></pre></td></tr></table></figure>
+
+<h2 id="在使用者层面做优化"><a href="#在使用者层面做优化" class="headerlink" title="在使用者层面做优化"></a>在使用者层面做优化</h2><p>例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">X <span class="title">bar</span><span class="params">( <span class="keyword">const</span> T&amp; y, <span class="keyword">const</span> T&amp; z)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    X xx;</span><br><span class="line">    <span class="comment">//用y,z来处理xx</span></span><br><span class="line">    <span class="keyword">return</span> xx;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上述代码会引起<code>return xx;</code>的<code>memberwise</code>拷贝一个结果到<code>__result</code>中，所以，可以通过使用</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">X <span class="title">bar</span><span class="params">(<span class="keyword">const</span> T&amp; y, <span class="keyword">const</span> T&amp; z)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">X</span>(y, z);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>由此，<code>__result</code>会被直接计算，而不是通过<code>copy construct</code>拷贝得到。</p>
+<h2 id="在编译器层面做优化（没看懂）"><a href="#在编译器层面做优化（没看懂）" class="headerlink" title="在编译器层面做优化（没看懂）"></a>在编译器层面做优化（没看懂）</h2><p><strong>NRV：编译器优化操作，Named Return Value</strong>，看大概意思就是，搞一个<code>inline</code>的拷贝构造函数出来能够优化效率，但是还存在许多争议。</p>
+<h2 id="2-4-成员初始化队列"><a href="#2-4-成员初始化队列" class="headerlink" title="2.4 成员初始化队列"></a>2.4 成员初始化队列</h2><p>以下四种情况，必须使用<code>member initialization list</code>:</p>
+<ol>
+<li>当初始化一个<code>reference member</code>时</li>
+<li>当初始化一个<code>const member</code>时</li>
+<li>调用一个<code>base class</code>的<code>constructor</code>，而他拥有一组参数时</li>
+<li>调用一个<code>member class</code>的<code>constructor</code>，而他拥有一组参数时。</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Word</span>&#123;</span></span><br><span class="line">    String _name;</span><br><span class="line">    <span class="keyword">int</span> _cnt;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">Word</span>() &#123; <span class="comment">//效率低下 </span></span><br><span class="line">        _name = <span class="number">0</span>;</span><br><span class="line">        _cnt = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>上述代码会被扩展为:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">Word::<span class="built_in">Word</span>()</span><br><span class="line">&#123;</span><br><span class="line">    _name.String::<span class="built_in">String</span>();</span><br><span class="line">    String temp = <span class="built_in">String</span>(<span class="number">0</span>); <span class="comment">//调用构造函数</span></span><br><span class="line">    _name.String::<span class="keyword">operator</span>=(temp); </span><br><span class="line">    temp.String::~<span class="built_in">String</span>(); <span class="comment">//上面四行就是扩展结果，导致效率低下</span></span><br><span class="line">    _cnt = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//较好的方式</span></span><br><span class="line">Word::Word : _name(<span class="number">0</span>)</span><br><span class="line">&#123;</span><br><span class="line">    _cnt = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//这会被扩展为</span></span><br><span class="line">Word::<span class="built_in">Word</span>()</span><br><span class="line">&#123;</span><br><span class="line">    _name.String::<span class="built_in">String</span>(<span class="number">0</span>);</span><br><span class="line">    _cnt = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><em>感觉好像是能用<code>initialization list</code>就用</em></p>
+<p><strong>initialization list中项目的顺序是由class中members声明的顺序决定，而不是list中的顺序决定。</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">X</span>&#123;</span></span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line">    <span class="keyword">int</span> j;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">X</span>(<span class="keyword">int</span> val)</span><br><span class="line">     : <span class="built_in">j</span>(val), <span class="built_in">i</span>(j) <span class="comment">//引发问题</span></span><br><span class="line">    &#123; &#125;</span><br><span class="line">    ···</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">//然而以下没有问题</span></span><br><span class="line">X::<span class="built_in">X</span>(<span class="keyword">int</span> val)</span><br><span class="line"> : <span class="built_in">j</span>(val) <span class="comment">//init list先于用户代码执行</span></span><br><span class="line">&#123;</span><br><span class="line">    i = j;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>可以在init list中调用函数</strong><br>例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">X::<span class="built_in">X</span>(<span class="keyword">int</span> val) </span><br><span class="line"> : <span class="built_in">i</span>(<span class="built_in">xfoo</span>(val), <span class="built_in">j</span>(val))</span><br><span class="line">&#123; &#125;</span><br></pre></td></tr></table></figure>
+<p>以上代码合法，但最好不要这样使用，因为<code>xfoo(val)</code>可能会改变<code>val</code>等情况，导致代码不明确。</p>
+<p>同时，以上代码会被扩展为：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">X::<span class="built_in">X</span>(<span class="comment">/*this ptr*/</span>, <span class="keyword">int</span> val)</span><br><span class="line">&#123;</span><br><span class="line">    i = <span class="keyword">this</span> -&gt; <span class="built_in">xfoo</span>(val);</span><br><span class="line">    j = val;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="3-Data语意学"><a href="#3-Data语意学" class="headerlink" title="3.Data语意学"></a>3.Data语意学</h1><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">X</span> &#123;</span>&#125;;                      <span class="comment">//sizeof X结果为1</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Y</span> :</span> <span class="keyword">public</span> <span class="keyword">virtual</span> X &#123;&#125;;   <span class="comment">//sizeof Y结果为8</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Z</span> :</span> <span class="keyword">public</span> <span class="keyword">virtual</span> X &#123;&#125;;   <span class="comment">//sizeof Z结果为8</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span> :</span> <span class="keyword">public</span> Y, <span class="keyword">public</span> Z &#123;&#125;; <span class="comment">//sizeof A结果为12</span></span><br></pre></td></tr></table></figure>
+<p>对于一个空<code>class</code>如上述X，它有一个隐藏的1byte大小，是一个被编译器安插进去的<code>char</code>，这使得同一<code>class</code>的不同<code>object</code>并不相同。</p>
+<p>对于Y和Z的<code>sizeof</code>结果，解释如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//sizeof Y == sizeof Z == 8 这个大小与机器和编译器均有关</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Y</span> :</span> <span class="keyword">public</span> <span class="keyword">virtual</span> X &#123; &#125;;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Z</span> :</span> <span class="keyword">public</span> <span class="keyword">virtual</span> x &#123; &#125;;</span><br></pre></td></tr></table></figure>
+<p>Y和Z的大小受到三个因素的影响：</p>
+<ol>
+<li>语言本身造成的额外负担：当语言支持<code>virtual base classes</code>就会导致一些额外负担，在<code>derived class</code>中，这是一个指针，指向<code>virtual base class subobject</code>或是一个相关的表格。表格中存放的是<code>virtual base class subobject</code>的地址或是其偏移位置。</li>
+<li>编译器对于特殊情况提供的优化处理：<code>virtual base class X subobject</code>的<code>1 byte</code>会出现在<code>class Y和Z</code>上。另外，某些编译器会对<code>empty virtual base class</code>提供支持，这存在<code>1 byte</code>的大小，上述展示中并不存在这个优化。</li>
+<li>Alignment的限制：<code>class Y和Z</code>的大小目前为止<code>5 byte</code>，但大部分机器上聚合的结构体大小会受到<code>alignment</code>的限制，比如上述中<code>alignment</code>大小是<code>4 byte</code>，所以为了存取效率，将会被填充到<code>8 byte</code>。</li>
+</ol>
+<p>如上述的一个<code>class Y</code>中，存在三部分：</p>
+<ol>
+<li>4byte大小的指针，指向class X</li>
+<li>1byte大小的<code>char</code>，因为Y是一个空类</li>
+<li>3byte大小的<code>alignment</code>填充，凑齐4byte的整数倍</li>
+</ol>
+<p>然后A的大小为12byte这是因为多重继承不会重复两个<code>virtual base class X</code>的部分。class A的大小由以下几点决定：</p>
+<ol>
+<li>被共享的唯一一个<code>class X</code>实例，大小1byte</li>
+<li><code>Base class Y</code>的大小，减去因为<code>virtual base class X</code>的大小，结果是4bytes，加上<code>Base class Z</code>的同样大小，同8bytes</li>
+<li>class A自己的大小：0byte</li>
+<li>class A的<code>alignment</code>大小，上述共9bytes，填充至12bytes</li>
+<li><em>如果编译器针对<code>empty virtual base class</code>做了处理，则<code>class X</code>的1byte不再出现，也就不会填充，所以共8bytes</em></li>
+</ol>
+<p>对于<code>static members</code>，则不论是否有实例，有多少实例，都会有且只有一份<code>static objects</code></p>
+<h1 id="3-2Data-Member绑定"><a href="#3-2Data-Member绑定" class="headerlink" title="3.2Data Member绑定"></a>3.2Data Member绑定</h1><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">extern</span> <span class="keyword">int</span> x;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Point3d</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    ···</span><br><span class="line">    <span class="comment">//对于函数本体的分析将延迟，</span></span><br><span class="line">    <span class="comment">//直到class声明的右大括号出现才开始</span></span><br><span class="line">    <span class="function"><span class="keyword">float</span> <span class="title">X</span><span class="params">()</span> <span class="keyword">const</span> </span>&#123;<span class="keyword">return</span> x;&#125;</span><br><span class="line">    ···</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">float</span> x;</span><br><span class="line">    ···</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">//现在开始分析，所以X()将返回类内的x，而非顶部extern的x</span></span><br><span class="line"></span><br><span class="line">然而，对于<span class="keyword">typedef</span>，则需要将nested type声明放在<span class="class"><span class="keyword">class</span>的起始处，如</span></span><br><span class="line"><span class="class"><span class="title">typedef</span> <span class="title">int</span> <span class="title">length</span>;</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Point3d</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">mumble</span><span class="params">(length val)</span> </span>&#123;_val = val;&#125; <span class="comment">//length被解析为global的int</span></span><br><span class="line">    <span class="function">length <span class="title">mumble</span><span class="params">()</span> </span>&#123;<span class="keyword">return</span> _val;&#125; <span class="comment">//length被解析为int, _val为Point3d::_val</span></span><br><span class="line">    ···</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">typedef</span> <span class="keyword">float</span> length;</span><br><span class="line">    length _val; <span class="comment">//float</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="DataMember布局"><a href="#DataMember布局" class="headerlink" title="DataMember布局"></a>DataMember布局</h2><p>C++要求，在每一个access section中，members的排列主需要符合“较晚出现的members在class object中有较高的地址”，也就是说，他们不一定要连续排列。<em>access section的多少不会带来额外的开销，也就是说在一个class中，在一个section中声明8个members和在8个sections中总共声明8个members，得到的object大小都是一样的。</em></p>
+<h1 id="3-3DataMember的存取"><a href="#3-3DataMember的存取" class="headerlink" title="3.3DataMember的存取"></a>3.3DataMember的存取</h1><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Point3d origin;</span><br><span class="line">Point3d *pt = origin;</span><br><span class="line"></span><br><span class="line">origin.x = <span class="number">0.0</span>;</span><br><span class="line">pt -&gt; x = <span class="number">0.0</span>;</span><br></pre></td></tr></table></figure>
+<h2 id="Static-Data-Member"><a href="#Static-Data-Member" class="headerlink" title="Static Data Member"></a>Static Data Member</h2><p>对于static data member的存取而言，从指令执行的观点来看，这是唯一一个“通过指针和通过一个对象来存取member，结论完全相同”的情况。因为通过一个对象（origin.x）来存取<code>static data member</code>，只是一种语法糖。</p>
+<p><strong>即使x是一个从复杂继承关系中继承而来的member也无所谓。</strong></p>
+<p>对一个<code>static data member</code>取地址，得到的是一个指向其数据类型的指针，而不是一个指向其<code>class member</code>的指针。如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&amp;Point3d::x;</span><br><span class="line">会得到一个如下的内存地址：</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span>*</span><br></pre></td></tr></table></figure>
+<p>如果有两个class，各自拥有一个<code>static data member freeList</code>，那么如果不对名称进行修改，就会导致名称冲突，引起段错误。编译器的解决方法是暗中对每一个<code>static data member</code>编码，以获得独一无二的识别码。这被称作：<code>name-mangling</code></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1353,154 +1542,6 @@
 </tbody></table>
 <p>TCP/IP中注重IP层，认为面向连接是上层的事情，不需要IP层考虑，所以网络层只有无连接类型。</p>
 
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://sldkfjoias.github.io/2020/04/18/%E7%AC%AC%E4%B8%80%E7%AB%A0_%E6%A6%82%E8%BF%B0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="张石">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="YeeHHa">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/04/18/%E7%AC%AC%E4%B8%80%E7%AB%A0_%E6%A6%82%E8%BF%B0/" class="post-title-link" itemprop="url">计算机网络概述</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-04-18 16:49:56" itemprop="dateCreated datePublished" datetime="2020-04-18T16:49:56+08:00">2020-04-18</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-04-08 16:53:38" itemprop="dateModified" datetime="2021-04-08T16:53:38+08:00">2021-04-08</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="概念、组成、功能、分类"><a href="#概念、组成、功能、分类" class="headerlink" title="概念、组成、功能、分类"></a>概念、组成、功能、分类</h2><p>计算机网络：一个将分散的、具有独立功能的计算机系统。通过通信设备和线路连接起来，由功能完善的软件实现<em>资源共享</em>和<em>信息传递</em>的功能。<br>计算机网络是互联、自治的集合。</p>
-<p>功能：</p>
-<ul>
-<li>数据通信</li>
-<li>资源共享（软件、硬件、数据）</li>
-<li>分布式系统</li>
-<li>提高可靠性</li>
-<li>负载均衡</li>
-</ul>
-<p>组成：</p>
-<ul>
-<li>硬件</li>
-<li>软件</li>
-<li>协议：规定了数据传输的规范</li>
-</ul>
-<p>工作方式：</p>
-<ul>
-<li>边缘部分：用户直接使用</li>
-<li>核心部分：边缘部分服务</li>
-</ul>
-<p>功能组成：</p>
-<ul>
-<li>通信子网：实现数据通信。是各种通信介质、通信设备、相应的网络协议组成。</li>
-<li>资源子网：实现资源共享/数据处理。是实现资源共享功能的设备和软件的集合</li>
-</ul>
-<p>资源子网：应用层  表示层  会话层<br>通信子网：网络层  链路层  物理层</p>
-<h2 id="计算机网络分类"><a href="#计算机网络分类" class="headerlink" title="计算机网络分类"></a>计算机网络分类</h2><ol>
-<li><p>按分布范围分：</p>
-<ul>
-<li>广域网（交换技术）</li>
-<li>城域网</li>
-<li>局域网（广播技术）</li>
-<li>个人区域网</li>
-</ul>
-</li>
-<li><p>按使用者分：</p>
-<ul>
-<li>公用网络</li>
-<li>专用网络</li>
-</ul>
-</li>
-<li><p>按交换技术分：</p>
-<ul>
-<li>电路交换</li>
-<li>报文交换</li>
-<li>分组交换</li>
-</ul>
-</li>
-<li><p>按拓扑结构分：</p>
-<ul>
-<li>总线型</li>
-<li>星型</li>
-<li>环形</li>
-<li>网状型</li>
-</ul>
-</li>
-<li><p>按传输技术分：</p>
-<ul>
-<li>广播式网络：共享公共通信信道</li>
-<li>点对点网络：分组存储转发、路由选择机制</li>
-</ul>
-</li>
-</ol>
-<h2 id="标准化工作"><a href="#标准化工作" class="headerlink" title="标准化工作"></a>标准化工作</h2><p>标准分类：</p>
-<ul>
-<li>法定标准：OSI</li>
-<li>事实标准：TCP/IP</li>
-</ul>
-<p>制定标准流程：RFC（Request For Comments）</p>
-<ul>
-<li>因特网草案：此阶段还不是RFC文档</li>
-<li>建议标准：开始成为RFC文档</li>
-<li>草案标准：已取消该阶段</li>
-<li>因特网标准</li>
-</ul>
-<p>国际标准化组织ISO： OSI参考模型、HDLC协议<br>国际电信联盟ITU：制定电气通信规则<br>IEEE：学术机构、IEEE802标准<br>IETF：RFC</p>
-<h2 id="速率、带宽、吞吐量"><a href="#速率、带宽、吞吐量" class="headerlink" title="速率、带宽、吞吐量"></a>速率、带宽、吞吐量</h2><h3 id="速率"><a href="#速率" class="headerlink" title="速率"></a>速率</h3><p>速率：数据率或称数据传输率或比特率。<br>连接在计算机网络上的主机在数字信道上传送数据的<strong>位数的速率</strong>。<br>单位：b/s kb/s Mb/s Gb/s Tb/s $10^3$进制<br><strong>1 Byte = 8 bit</strong></p>
-<h3 id="带宽"><a href="#带宽" class="headerlink" title="带宽"></a>带宽</h3><p>带宽原指某个信号具有的频带宽度，即最高频率与最低频率之差，单位是赫兹（Hz）。<br>计算机网络中，带宽表示网络的通信线路传送数据的能力，通常是单位时间内从网络中某一点到另一点所能通过的<strong>最高数据率</strong>，单位是“比特每秒”</p>
-<h3 id="吞吐量"><a href="#吞吐量" class="headerlink" title="吞吐量"></a>吞吐量</h3>
       
     </div>
 
