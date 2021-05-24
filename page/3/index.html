@@ -172,7 +172,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-count">26</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -208,6 +208,116 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://sldkfjoias.github.io/2020/04/18/tcpip%E5%9B%9B%E5%B1%82/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="张石">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YeeHHa">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/04/18/tcpip%E5%9B%9B%E5%B1%82/" class="post-title-link" itemprop="url">TCP/IP参考模型</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-04-18 19:48:59" itemprop="dateCreated datePublished" datetime="2020-04-18T19:48:59+08:00">2020-04-18</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-04-08 17:02:22" itemprop="dateModified" datetime="2021-04-08T17:02:22+08:00">2021-04-08</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>先产生了协议栈，之后根据协议栈进行划分，分为4层</p>
+<h2 id="应用层"><a href="#应用层" class="headerlink" title="应用层"></a>应用层</h2><p>包含了OSI中的上三层（应用层、表示层、会话层）</p>
+<p>对应协议：HTTP FTP DNS</p>
+<h2 id="传输层"><a href="#传输层" class="headerlink" title="传输层"></a>传输层</h2><p>传输层</p>
+<p>对应协议: TCP UDP</p>
+<h2 id="网际层"><a href="#网际层" class="headerlink" title="网际层"></a>网际层</h2><p>IP | ICMP | OSPF</p>
+<h2 id="网络接口层"><a href="#网络接口层" class="headerlink" title="网络接口层"></a>网络接口层</h2><p>指出数据需要通过一定方式连接到物理介质上。</p>
+<p>常见协议：Ethernet | ATM | Frame Relay</p>
+<h2 id="TCP-IP和OSI参考模型的异同"><a href="#TCP-IP和OSI参考模型的异同" class="headerlink" title="TCP/IP和OSI参考模型的异同"></a>TCP/IP和OSI参考模型的异同</h2><p>相同点：</p>
+<ul>
+<li>都采取了分层模型</li>
+<li>基于独立的协议栈概念</li>
+<li>可以实现异构网络互联</li>
+</ul>
+<p>不同点：</p>
+<ul>
+<li>OSI定义了三点：服务、协议、接口</li>
+<li>OSI先出现分层，不指定特定协议</li>
+<li>TCP/IP设计之初考虑到异构网络问题，将IP层作为重要层次</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>ISO/OSI模型</th>
+<th>TCP/IP模型</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>传输层</td>
+<td>面向连接</td>
+<td>无连接+面向连接</td>
+</tr>
+<tr>
+<td>网络层</td>
+<td>无连接+面向连接</td>
+<td>无连接</td>
+</tr>
+</tbody></table>
+<p>TCP/IP中注重IP层，认为面向连接是上层的事情，不需要IP层考虑，所以网络层只有无连接类型。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
