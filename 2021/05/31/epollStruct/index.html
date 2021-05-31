@@ -23,21 +23,22 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"sldkfjoias.github.io","root":"/","images":"/images","scheme":"Pisces","version":"8.3.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
-<meta name="description" content="socket在创建时默认是阻塞的。可以通过给socket系统调用的第二个参数传递SOCK_NONBLOCK标志，或者通过fcntl系统调用的F_SETFL命令，将其设置为非阻塞的。阻塞和非阻塞概念可以应用到所有文件描述符，而不只是socket 阻塞IO针对阻塞IO执行的系统调用可能因为无法立即完成而被操作系统挂起，直到等待的时间发生为止。  例如客户端通过connect向服务器发起连接，conne">
+<meta name="description" content="epoll使用 int epoll_create(int size);创建一个epoll，其中size目前并不起作用，返回一个fd用于操作该epoll int epoll_ctl(int epfd, int op, int fd, struct epoll_event* event);为epoll注册事件,fd是文件描述符，op指定操作类型，event参数指定事件。op参数制定操作类型： EPOL">
 <meta property="og:type" content="article">
-<meta property="og:title" content="IO模型">
-<meta property="og:url" content="https://sldkfjoias.github.io/2021/04/08/IO%E6%A8%A1%E5%9E%8B/index.html">
+<meta property="og:title" content="epoll结构体和一些使用">
+<meta property="og:url" content="https://sldkfjoias.github.io/2021/05/31/epollStruct/index.html">
 <meta property="og:site_name" content="YeeHHa">
-<meta property="og:description" content="socket在创建时默认是阻塞的。可以通过给socket系统调用的第二个参数传递SOCK_NONBLOCK标志，或者通过fcntl系统调用的F_SETFL命令，将其设置为非阻塞的。阻塞和非阻塞概念可以应用到所有文件描述符，而不只是socket 阻塞IO针对阻塞IO执行的系统调用可能因为无法立即完成而被操作系统挂起，直到等待的时间发生为止。  例如客户端通过connect向服务器发起连接，conne">
+<meta property="og:description" content="epoll使用 int epoll_create(int size);创建一个epoll，其中size目前并不起作用，返回一个fd用于操作该epoll int epoll_ctl(int epfd, int op, int fd, struct epoll_event* event);为epoll注册事件,fd是文件描述符，op指定操作类型，event参数指定事件。op参数制定操作类型： EPOL">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-04-08T12:15:59.000Z">
-<meta property="article:modified_time" content="2021-05-18T12:28:32.231Z">
+<meta property="article:published_time" content="2021-05-31T11:39:23.000Z">
+<meta property="article:modified_time" content="2021-05-31T12:58:24.245Z">
 <meta property="article:author" content="张石">
-<meta property="article:tag" content="服务器编程">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="网络编程">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://sldkfjoias.github.io/2021/04/08/IO%E6%A8%A1%E5%9E%8B/">
+<link rel="canonical" href="https://sldkfjoias.github.io/2021/05/31/epollStruct/">
 
 
 <script class="page-configurations">
@@ -49,7 +50,7 @@
     lang   : 'zh-CN'
   };
 </script>
-<title>IO模型 | YeeHHa</title>
+<title>epoll结构体和一些使用 | YeeHHa</title>
   
 
 
@@ -164,7 +165,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%98%BB%E5%A1%9EIO"><span class="nav-number">1.</span> <span class="nav-text">阻塞IO</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9D%9E%E9%98%BB%E5%A1%9EIO"><span class="nav-number">2.</span> <span class="nav-text">非阻塞IO</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IO%E5%A4%8D%E7%94%A8"><span class="nav-number">3.</span> <span class="nav-text">IO复用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SIGIO%E4%BF%A1%E5%8F%B7"><span class="nav-number">4.</span> <span class="nav-text">SIGIO信号</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93%E4%B8%8E%E5%AF%B9%E6%AF%94"><span class="nav-number">5.</span> <span class="nav-text">小结与对比</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">6.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#epoll%E4%BD%BF%E7%94%A8"><span class="nav-number">1.</span> <span class="nav-text">epoll使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#struct-epoll-event"><span class="nav-number">2.</span> <span class="nav-text">struct epoll_event</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -224,7 +225,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://sldkfjoias.github.io/2021/04/08/IO%E6%A8%A1%E5%9E%8B/">
+    <link itemprop="mainEntityOfPage" href="https://sldkfjoias.github.io/2021/05/31/epollStruct/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -237,7 +238,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          IO模型
+          epoll结构体和一些使用
         </h1>
 
         <div class="post-meta-container">
@@ -247,16 +248,10 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
+      
 
-      <time title="创建时间：2021-04-08 20:15:59" itemprop="dateCreated datePublished" datetime="2021-04-08T20:15:59+08:00">2021-04-08</time>
+      <time title="创建时间：2021-05-31 19:39:23 / 修改时间：20:58:24" itemprop="dateCreated datePublished" datetime="2021-05-31T19:39:23+08:00">2021-05-31</time>
     </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-05-18 20:28:32" itemprop="dateModified" datetime="2021-05-18T20:28:32+08:00">2021-05-18</time>
-      </span>
 
   
 </div>
@@ -268,62 +263,26 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>socket在创建时默认是阻塞的。可以通过给socket系统调用的第二个参数传递SOCK_NONBLOCK标志，或者通过fcntl系统调用的F_SETFL命令，将其设置为非阻塞的。<em>阻塞和非阻塞概念可以应用到所有文件描述符，而不只是socket</em></p>
-<h2 id="阻塞IO"><a href="#阻塞IO" class="headerlink" title="阻塞IO"></a>阻塞IO</h2><p>针对阻塞IO执行的系统调用可能因为无法立即完成而被操作系统挂起，直到等待的时间发生为止。</p>
-<blockquote>
-<p>例如客户端通过connect向服务器发起连接，connect将首先发送同步报文段给服务器，然后等待服务器返回确认报文段。如果服务器的确认报文段没有立即到达客户端，则connect调用将被挂起，直到客户端收到确认报文段并唤醒connect调用。</p>
-</blockquote>
-<p>socket的基础API中，可能被阻塞的系统调用包括accept、send、recv和connect</p>
-<h2 id="非阻塞IO"><a href="#非阻塞IO" class="headerlink" title="非阻塞IO"></a>非阻塞IO</h2><p>针对非阻塞IO执行的系统调用总是立即返回，而不管事件是否已经发生。如果事件没有立即发生，这些系统调用就返回-1，和出错的情况一样。<em>所以非阻塞IO需要根据errno来区分这两种情况。</em>对于accept、send和recv来说，事件未发生时errno通常被设置为EAGAIN或者EWOULDBLOCK；对于connect而言，errno则被设置成EINPROGRESS。</p>
-<p>显然，只有在事件已经发生的情况下操作非阻塞IO才能提高程序的效率。<strong>因此，非阻塞IO通常要和其他IO通知机制一起使用，比如IO复用和SIGIO信号</strong></p>
-<h2 id="IO复用"><a href="#IO复用" class="headerlink" title="IO复用"></a>IO复用</h2><p>IO复用是最常使用的IO通知机制，它指的是应用程序通过IO向内核注册一组事件，内核通过IO复用函数把其中就绪的事件通知给应用程序。常用的IO复用函数：select，poll和epoll</p>
-<blockquote>
-<p>IO复用函数本身是阻塞的，它们能提高应用程序效率的主要原因在于他们具有同时监听多个IO事件的能力。</p>
-</blockquote>
-<h2 id="SIGIO信号"><a href="#SIGIO信号" class="headerlink" title="SIGIO信号"></a>SIGIO信号</h2><p>SIGIO信号也可以用来报告IO事件，可以为一个目标文件描述符指定宿主进程，被指定的宿主进程将捕获到SIGIO信号，这样当目标文件描述符上有事件发生时，SIGIO信号的信号处理函数将被触发，也就可以在该信号处理函数中对目标文件描述符执行非阻塞IO操作。</p>
-<h2 id="小结与对比"><a href="#小结与对比" class="headerlink" title="小结与对比"></a>小结与对比</h2><ul>
-<li><p>理论上说，阻塞IO、IO复用和信号驱动IO都是同步IO模型。因为这三种IO模型中，IO的读写操作都是IO事件发生之后，有应用程序完成的。</p>
-</li>
-<li><p>对异步IO而言，用户可以直接对IO执行读写操作，这些操作高速内核用户读写缓冲区的位置，以及IO操作完成之后内核通知应用程序的方式，异步IO的读写操作总是立即返回，而不论IO是否是阻塞的，因为真正的读写操作已经有内核接管。</p>
-</li>
-<li><p>也就是说，同步IO模型要求用户代码自行执行IO操作，而异步IO机制则由内核来执行IO操作。</p>
-</li>
-<li><blockquote>
-<p>同步IO向应用程序通知的是IO就绪事件，异步IO向应用程序通知的是IO完成事件</p>
-</blockquote>
-</li>
+        <h2 id="epoll使用"><a href="#epoll使用" class="headerlink" title="epoll使用"></a>epoll使用</h2><ol>
+<li><code>int epoll_create(int size);</code>创建一个epoll，其中size目前并不起作用，返回一个fd用于操作该epoll</li>
+<li><code>int epoll_ctl(int epfd, int op, int fd, struct epoll_event* event);</code>为epoll注册事件,fd是文件描述符，op指定操作类型，event参数指定事件。op参数制定操作类型：<ul>
+<li>EPOLL_CTL_ADD 往事件表注册fd上的事件</li>
+<li>EPOLL_CTL_MOD 修改fd上的注册事件</li>
+<li>EPOLL_CTL_DEL 删除fd上的注册事件</li>
 </ul>
-<table>
-<thead>
-<tr>
-<th>IO模型</th>
-<th>读写操作</th>
-<th>阻塞阶段</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>阻塞IO</td>
-<td>程序负责控制IO读写</td>
-<td>程序阻塞于函数读写</td>
-</tr>
-<tr>
-<td>IO复用</td>
-<td>程序阻塞于IO复用系统调用，但是系统调用可以监听多个IO事件</td>
-<td>对IO本身的读写操作是非阻塞的</td>
-</tr>
-<tr>
-<td>SIGIO信号</td>
-<td>信号触发读写就绪事件，应用程序执行读写操作</td>
-<td>程序没有阻塞阶段</td>
-</tr>
-<tr>
-<td>异步IO</td>
-<td>内核执行读写操作并触发读写完成事件</td>
-<td>程序没有阻塞阶段</td>
-</tr>
-</tbody></table>
-<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ol>
+</li>
+<li><code>int epoll_wait(int epfd, struct epoll* events, int maxevents, int timeout);</code>等待一组文件描述符上的事件，成功时返回就绪的文件描述符的个数，失败返回-1置errno。如果epoll_wait检测到事件，就将所有就绪事件从内核事件表复制到它的第二个参数<code>events</code>指向的数组中。</li>
+</ol>
+<h2 id="struct-epoll-event"><a href="#struct-epoll-event" class="headerlink" title="struct epoll_event"></a>struct epoll_event</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">union</span> <span class="title">epoll_data</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">void</span> *ptr;</span><br><span class="line">    <span class="keyword">int</span> fd;</span><br><span class="line">    <span class="keyword">__uint32_t</span> u32;</span><br><span class="line">    <span class="keyword">__uint64_t</span> u64;</span><br><span class="line">&#125; <span class="keyword">epoll_data_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">epoll_event</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">uint32_t</span> events; <span class="comment">//Epoll events</span></span><br><span class="line">    <span class="keyword">epoll_data_t</span> data; <span class="comment">//User data variable</span></span><br><span class="line">&#125;__attribute__((__packed__)); </span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><code>__attribute__((__packed__))</code>表示结构体采用紧凑排列，不使用字节对齐</p>
+</blockquote>
+<p>epoll事件跟poll基本相同，但是前面加个’E’，例如<code>EPOLLIN,EPOLLOUT,EPOLLET,EPOLLONESHOT</code></p>
+<p>这个<code>epoll_event.data</code>最常用的就是<code>fd</code>，我纳闷了好久，这个fd不是在<code>epoll_ctl</code>里面都传过一次了，为啥还要传。其实这个<code>fd</code>作用是用于后面找到事件所从属的文件描述符…然后里面那个<code>ptr</code>可以用来保存除了<code>fd</code>以外的数据，但是因为是个union，所以用了<code>ptr</code>就不能用<code>fd</code>了，要用就把<code>fd</code>存到<code>ptr</code>所指的数据里面，比如<code>ptr</code>指向一个自定义的结构体，在里面再存<code>fd</code></p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
 <li>《Linux高性能服务器编程》</li>
+<li><a target="_blank" rel="noopener" href="https://www.dazhuanlan.com/2019/12/09/5dedf96a76470/">详解epoll_events结构体</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/u012308586/article/details/90751116">__attribute__ ((__packed__))关键字</a></li>
 </ol>
 
     </div>
@@ -334,21 +293,19 @@
 
     <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%BC%96%E7%A8%8B/" rel="tag"># 服务器编程</a>
+              <a href="/tags/C/" rel="tag"># C++</a>
+              <a href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" rel="tag"># 网络编程</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2021/04/07/IO%E5%A4%8D%E7%94%A8%E5%87%BD%E6%95%B0%E6%AF%94%E8%BE%83/" rel="prev" title="I/O复用函数的比较">
-                  <i class="fa fa-chevron-left"></i> I/O复用函数的比较
+                <a href="/2021/05/25/setUIDfilter/" rel="prev" title="创建进程时setUID的过滤机制">
+                  <i class="fa fa-chevron-left"></i> 创建进程时setUID的过滤机制
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2021/05/06/Android%E4%B8%80%E4%BA%9Bapp%E5%90%AF%E5%8A%A8%E7%9F%A5%E8%AF%86/" rel="next" title="有关Android一些笔记">
-                  有关Android一些笔记 <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>
@@ -425,7 +382,7 @@
       quicklink.listen({
         timeout : 500,
         priority: true,
-        ignores : [uri => uri.includes('#'),uri => uri === 'https://sldkfjoias.github.io/2021/04/08/IO%E6%A8%A1%E5%9E%8B/',]
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://sldkfjoias.github.io/2021/05/31/epollStruct/',]
       });
       });
   </script>
