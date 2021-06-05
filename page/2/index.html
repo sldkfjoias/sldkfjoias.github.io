@@ -172,7 +172,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">28</span>
+          <span class="site-state-item-count">27</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -208,135 +208,6 @@
 
 
     <div class="main-inner index posts-expand">
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://sldkfjoias.github.io/2021/04/07/IO%E5%A4%8D%E7%94%A8%E5%87%BD%E6%95%B0%E6%AF%94%E8%BE%83/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="张石">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="YeeHHa">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/04/07/IO%E5%A4%8D%E7%94%A8%E5%87%BD%E6%95%B0%E6%AF%94%E8%BE%83/" class="post-title-link" itemprop="url">I/O复用函数的比较</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-04-07 20:15:23" itemprop="dateCreated datePublished" datetime="2021-04-07T20:15:23+08:00">2021-04-07</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-05-18 20:28:30" itemprop="dateModified" datetime="2021-05-18T20:28:30+08:00">2021-05-18</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="三种IO复用函数的比较"><a href="#三种IO复用函数的比较" class="headerlink" title="三种IO复用函数的比较"></a>三种IO复用函数的比较</h1><p>select、poll和epoll三组IO复用系统调用都能同时监听多个文件描述符。它们会等待timeout指定的超过时间，直到一个或者多个文件描述符上有事件发生时返回，<strong>返回值是就绪的文件描述符的数量。</strong>返回0表示每有事件发生。</p>
-<p>三个函数都通过某种结构体变量来高速内核监听那些文件描述符上的事件，并使用该结构体来获取内核处理的结果。</p>
-<h2 id="select"><a href="#select" class="headerlink" title="select"></a>select</h2><p>参数类型<code>fd_set</code>没有将文件描述符和事件绑定，它仅仅是一个文件描述符的集合，因此select需要提供3个这种类型的参数来分别传入和输出可读可写及异常事件，这一方面使得select不能处理更多类型的事件，另一方面由于内核对<code>fd_set</code>集合的在线修改，应用程序下次调用select前不得不重置这三个<code>fd_set</code>集合。</p>
-<p>select存在允许监听的最大文件描述符数量上限，虽然可修改，但是可能会导致未定义行为出现。</p>
-<h2 id="poll"><a href="#poll" class="headerlink" title="poll"></a>poll</h2><p>poll的参数类型pollfd把文件描述符和事件都定义其中，任何事件都被统一处理，使编程接口简洁的多。并且内核每次修改的都是<code>pollfd</code>结构体的revents成员，而events成员保持不变，因此下次调用poll时应用程序无需重置pollfd类型的事件集参数。</p>
-<p>poll使用nfds参数指定最多监听的文件描述符和事件，可以达到系统允许打开的最大文件描述符数目——65535</p>
-<hr>
-<h3 id="select和poll相对来说更为相似"><a href="#select和poll相对来说更为相似" class="headerlink" title="select和poll相对来说更为相似"></a>select和poll相对来说更为相似</h3><p>由于每次select和poll调用都返回整个用户注册的事件集合，所以应用程序索引就绪文件描述符的时间复杂度O(n)。同时，二者只能工作在相对低效的LT模式</p>
-<h2 id="epoll"><a href="#epoll" class="headerlink" title="epoll"></a>epoll</h2><ul>
-<li>epoll在内核中维护了一个事件表，并提供了一个独立的系统调用<code>epoll_ctl</code>来控制往其中添加、删除、修改事件。这样，每次<code>epoll_wait</code>调用都直接从该内核事件表取得用户注册的事件，从而无需反复从用户空间读入这些事件。</li>
-<li>epoll_wait系统调用的events参数仅仅用来返回就绪的事件，这使得应用程序索引就绪文件描述符的时间复杂度达到O(1)。</li>
-<li>并且可以工作在高效的ET模式，并且可以设置EPOLLONESHOT来进一步减少事件触发次数</li>
-<li>epoll_wait使用maxevents参数指定最多监听的文件描述符和事件，可以达到系统允许打开的最大文件描述符数目——65535</li>
-<li>epoll_wait使用回调方式，内核检测到就绪的文件描述符时，触发回调函数，将文件描述符对应的事件插入内核就绪事件队列，最后在适当时机将就绪事件队列拷贝到用户空间。因此无需轮询</li>
-<li><strong>注意！</strong> 当活动连接比较多时，epoll_wait效率未必比select和poll高，因为此时回调函数会被触发的过于频繁。<strong>所以epoll_wait适用于连接数量多，但活动连接较少的情况</strong></li>
-</ul>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><table>
-<thead>
-<tr>
-<th>系统调用</th>
-<th>select</th>
-<th>poll</th>
-<th>epoll</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>事件集合</td>
-<td>用户通过3个参数传入感兴趣的可读可写、异常事件，内核通过对这些参数在线修改来反馈其中就绪事件，用户每次调用select都要重置3个参数</td>
-<td>统一处理所有事件类型，因此只有一个事件集参数。用户通过pollfd.events传入感兴趣事件，内核通过修改pollfd.revents反馈其中就绪的事件</td>
-<td>内核通过一个事件表直接管理用户感兴趣的所有事件。因此用户无需反复传入所有感兴趣的事件。epoll_wait系统调用的参数events仅用于反馈就绪的事件。</td>
-</tr>
-<tr>
-<td>应用程序索引就绪文件描述符的时间复杂度</td>
-<td>O(n)</td>
-<td>O(n)</td>
-<td>O(1)</td>
-</tr>
-<tr>
-<td>最大支持文件描述符数</td>
-<td>存在上限</td>
-<td>65535</td>
-<td>65535</td>
-</tr>
-<tr>
-<td>工作模式</td>
-<td>LT</td>
-<td>LT</td>
-<td>支持高效ET</td>
-</tr>
-<tr>
-<td>内核实现和工作效率</td>
-<td>轮询方式检测O(n)</td>
-<td>轮询方式检测O(n)</td>
-<td>采用回调方式检测就绪事件，O(1)</td>
-</tr>
-</tbody></table>
-<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ol>
-<li>《Linux高性能服务器编程》</li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
 
     
 
@@ -1555,6 +1426,247 @@
 <p>假定有两个随机事件$X$和$Y$，那么他们的互信息 $I(X;Y)$ 定义如下：</p>
 <p>$$<br>\begin{aligned}<br>    I(X;Y)=\sum_{x\in X,y\in Y}P(x,y)log\frac{P(x,y)}{P(x)P(y)}<br>\end{aligned}<br>$$</p>
 <p>还有，$I(X;Y)=H(X)-H(X|Y)$。互信息的取值在$(0 , min\lbrace H(X),H(Y) \rbrace )$之间。当二者完全相关时，$I(X|Y)=H(X)$，同时$H(X)=H(Y)$；当二者完全无关时$I(X;Y)=0$</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://sldkfjoias.github.io/2020/04/18/%E4%BA%8B%E5%8A%A1%E7%AE%A1%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="张石">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YeeHHa">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/04/18/%E4%BA%8B%E5%8A%A1%E7%AE%A1%E7%90%86/" class="post-title-link" itemprop="url">事务管理</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-04-18 21:40:13" itemprop="dateCreated datePublished" datetime="2020-04-18T21:40:13+08:00">2020-04-18</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-04-08 17:01:17" itemprop="dateModified" datetime="2021-04-08T17:01:17+08:00">2021-04-08</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="事务管理"><a href="#事务管理" class="headerlink" title="事务管理"></a>事务管理</h1><p><strong>事务</strong>：构成单一逻辑工作单元的操作合称为事务，事务要么不发生，要么全部发生。即使有故障，数据库系统也必须保证事务的正确执行。同时，数据库应该引入一种能够避免会引发不一致性的方式来管理事务并发执行。</p>
+<h2 id="事务概念"><a href="#事务概念" class="headerlink" title="事务概念"></a>事务概念</h2><p><strong>事务</strong>是一个程序执行单元。事务通常由高级数据操纵语言或编程语言，如通过ODBC或JDBC嵌入式数据库访问来书写。<code>begin transaction</code>和<code>end transaction</code>来界定。事务由这两个定界符之间的所有操作组成。</p>
+<ul>
+<li><p>这些步骤集合必须作为一个单一的、不可分割的单元出现。此乃<strong>原子性（Atomicity）</strong>。</p>
+</li>
+<li><p>事务是一个单一的、不可分割的单元出现，他不应该被不属于该事务的数据库操作影响。DBS必须采取特殊处理来保证事务能够正常执行，而不受到来自并发执行的数据库语句所干扰。此乃<strong>隔离性（Isolation）</strong></p>
+</li>
+<li><p>即使出现系统崩溃的情况出现，也要保证事务的操作是持久的。此乃<strong>持久性（Durability）</strong></p>
+</li>
+<li><p>事务必须保证数据库的一致性，即事务从一个一致性的数据库状态开始，事务提交之后数据库仍然是一个一致性状态。这种特性称为<strong>一致性（Consistency）</strong></p>
+</li>
+</ul>
+<p>不一致状态：由于故障出现，系统不再反映世界的真实情况，称为不一致状态，不一致状态只能出现在事务的执行过程期间，在其他时间不可见。</p>
+<p>持久性：<br>达到持久性的两种方法：</p>
+<ul>
+<li>在事务结束前，将更新写入磁盘</li>
+<li>在事务结束前，将已执行的更新信息已写入磁盘，该记录信息必须足够充分，能够保证出现故障之后事务可以重新执行，恢复该状态。</li>
+</ul>
+<h2 id="事务原子性和持久性"><a href="#事务原子性和持久性" class="headerlink" title="事务原子性和持久性"></a>事务原子性和持久性</h2><p>事务并非总能完成执行，这种未完成的事务称为<strong>中止（aborted）</strong>了。中止事务必须不对数据库的状态造成影响。一旦中止事务造成的变更被撤销，我们说事务<strong>已回滚（rolled back）</strong>。</p>
+<p>恢复机制负责管理事务中止。常见的方法是维护一个<strong>日志（log）</strong>。</p>
+<p>成功完成的事务称为<strong>已提交（committed）</strong>。一个已提交的事务会使数据库进入一个新的状态，即使出现故障，这个状态也必须保持。</p>
+<p>一旦事务已提交，我们不能通过中止来撤销其造成的影响。撤销已提交事务的唯一方法是执行一个<strong>补偿事务</strong>，这由用户负责，不由DBS处理。</p>
+<p>事务进入中止状态后，有两种选择：</p>
+<ul>
+<li>重启事务，仅当引起事务中止的是硬件导致的外中断。重启事务是一个新的事务。</li>
+<li>杀死事务，当事务内部逻辑异常或输入异常时，则需要杀死事务。</li>
+</ul>
+<h2 id="事务隔离性"><a href="#事务隔离性" class="headerlink" title="事务隔离性"></a>事务隔离性</h2><p>允许事务并行好处：</p>
+<ul>
+<li>提高吞吐量和资源利用率</li>
+<li>减少等待时间</li>
+</ul>
+<p>在并发执行中，必须保证执行的任何调度的效果都和没有并发执行调度的效果一样，这样可以保证数据库的一致性。也就是说，调度应该在某种意义上等价于一个串行调度。这种调度称为<strong>可串行化调度</strong></p>
+<p>类似于OS中的并发控制。</p>
+<h2 id="可串行化"><a href="#可串行化" class="headerlink" title="可串行化"></a>可串行化</h2><p>如果调度$S$可以经过一系列非冲突指令交换成$S’$，我们称$S$和$S’$是<strong>冲突等价</strong>的。</p>
+<h2 id="可恢复性"><a href="#可恢复性" class="headerlink" title="可恢复性"></a>可恢复性</h2><p>不论什么原因，如果事务$T_i$失败了，我们必须撤销该事务的影响以确保其原子性。在允许并发的系统中，原子性要求依赖于$T_i$的事务$T_j$(即读取了$T_i$写的数据)也中止。为确保这一点，我们需要对系统允许的调度类型做一些限制。</p>
+<h3 id="可恢复调度"><a href="#可恢复调度" class="headerlink" title="可恢复调度"></a>可恢复调度</h3><p>一个可恢复调度应满足：依赖者在被依赖者提交之后再提交。</p>
+<h3 id="无级联调度"><a href="#无级联调度" class="headerlink" title="无级联调度"></a>无级联调度</h3><p>通过对调度加以限制，依赖者只能在被依赖事务提交之后再进行读。</p>
+<h3 id="事务并发会出现的问题"><a href="#事务并发会出现的问题" class="headerlink" title="事务并发会出现的问题"></a>事务并发会出现的问题</h3><ul>
+<li>脏读：读取了尚未提交的事务所更新的数据。例如：事务A读取了事务B更新的数据，然后B回滚操作，那么A读取到的数据是脏数据。</li>
+<li>不可重复度：事务 A 多次读取同一数据，事务 B 在事务A多次读取的过程中，对数据作了更新并提交，导致事务A多次读取同一数据时，结果因此本事务先后两次读到的数据结果会不一致。</li>
+<li>幻读：幻读解决了不重复读，保证了同一个事务里，查询的结果都是事务开始时的状态（一致性）。<br>例如：事务T1对一个表中所有的行的某个数据项做了从“1”修改为“2”的操作 这时事务T2又对这个表中插入了一行数据项，而这个数据项的数值还是为“1”并且提交给数据库。 而操作事务T1的用户如果再查看刚刚修改的数据，会发现还有跟没有修改一样，其实这行是从事务T2中添加的，就好像产生幻觉一样，这就是发生了幻读。<h3 id="事务隔离性的级别"><a href="#事务隔离性的级别" class="headerlink" title="事务隔离性的级别"></a>事务隔离性的级别</h3></li>
+</ul>
+<p>如果事务在独立执行时保证数据库一致性，那么可串行性就能保证事务在并发执行时也具有一致性。</p>
+<p>SQL也允许一个事务这样规定：它以一种与其他事务以不可串行化的方式执行。</p>
+<p><strong>SQL标准隔离型级别如下（一致性级别由高到低）：（重点）</strong></p>
+<ul>
+<li>可串行化：保证可串行化调度，一致性最高，就好像没有并行。</li>
+<li>可重复读：只允许读取已提交事务，而且在一个事务的两次读取同一个数据项期间，其他事务不可更新该数据。但不要求与其他事务可串行化。</li>
+<li>不可重复读（已提交读）：只允许读取已提交数据，但不要求可重复读。例如，在事务两次读取一个数据项期间，另一个事务更新了该数据并提交。</li>
+<li>未提交读：允许读取未提交数据。</li>
+</ul>
+<p>以上所有隔离性级别都不允许<strong>脏写</strong>，即如果一个数据项已经被另一个尚未提交或是中止的事务写入，则不允许对该数据项进行写操作。</p>
+<h2 id="并发控制"><a href="#并发控制" class="headerlink" title="并发控制"></a>并发控制</h2><p>使用三种方式实现并发控制：</p>
+<ol>
+<li>加锁</li>
+<li>时间戳</li>
+<li>有效性检查</li>
+</ol>
+<p>其中2，3两种方法是基于恢复系统的控制方法。<strong>最常用的是两阶段锁和快照。</strong></p>
+<h3 id="基于锁的协议"><a href="#基于锁的协议" class="headerlink" title="基于锁的协议"></a>基于锁的协议</h3><h4 id="锁"><a href="#锁" class="headerlink" title="锁"></a>锁</h4><ul>
+<li>共享锁：$T_i$获得了$Q$上的共享锁，则可读不可写</li>
+<li>排他锁：$T_i$获得了$Q$上的排他锁，则可读可写</li>
+</ul>
+<p>锁必须由事务提出<strong>申请</strong>，并得到了并发控制器的<strong>授予</strong>，之后才能访问数据。并且，在数据访问期间必须拥有相应的锁，同时，即使在最后一次访问数据后立刻释放锁也不一定是正确的。</p>
+<p>然而，这种封锁可能会导致死锁出现。我们要求系统中每个事务遵循<strong>封锁协议</strong>。</p>
+<h4 id="锁的授予"><a href="#锁的授予" class="headerlink" title="锁的授予"></a>锁的授予</h4><p>申请排他锁的事务可能由于不断出现的申请共享锁的事务出现而饿死。为了避免这种情况，我们可以考虑读写者问题中，写者优先的方式，给申请锁的操作加锁。</p>
+<h4 id="两阶段锁！"><a href="#两阶段锁！" class="headerlink" title="两阶段锁！"></a>两阶段锁！</h4><p>保证可串行的一个协议是：<strong>两阶段封锁协议</strong>，该协议要求事务分为两个阶段，提出加锁和解锁申请。</p>
+<ol>
+<li>增长阶段：该阶段可以申请锁，但是不能释放锁</li>
+<li>缩减阶段：该阶段可以释放锁，不能申请锁</li>
+</ol>
+<p>二者的分界点（最后一次加锁的位置）称为事务的封锁点。</p>
+<ul>
+<li>两阶段锁不能保证不会发生死锁。不能避免级联回滚的发生。</li>
+</ul>
+<p>为了避免级联回滚，可以采用<strong>严格两阶段封锁协议</strong>，该协议除了要求两阶段之外，还要求实物持有的<strong>所有排他锁</strong>必须在事务提交之后才可以释放。</p>
+<p>强两阶段锁：要求事务提交之前不得释放任何锁。</p>
+<h4 id="多粒度："><a href="#多粒度：" class="headerlink" title="多粒度："></a>多粒度：</h4><p>某些情况允许我们把多个数据项聚成一组，作为一个同步单元。</p>
+<p>这就需要系统定义一种多级<strong>粒度</strong>机制。通过各种大小的数据项并定义数据粒度的层次结构。小粒度嵌套在大粒度的数据项中来实现。可以形象的表示为树。</p>
+<p>树中的每个节点都可以单独显式的加锁。当一个节点加锁时，该事务也以同样的锁，隐式的封锁其所有后代节点。</p>
+<p>这种条件下，系统在一事务申请锁的时候，需要搜索整棵树判断是否可以授予锁，这破坏了多粒度的初衷。</p>
+<p>为解决这种情况，引入了一种<strong>意向锁</strong>。如果给一个节点加上了意向锁，则意味着树较低层也需要显示加锁。在一个节点显式枷锁之前，该节点的全部祖先均加上了意向锁。<br>希望给某个节点（$Q$）加锁的事务必须遍历从根到$Q$的路径。遍历过程中，给各节点加上意向锁。</p>
+<h3 id="时间戳"><a href="#时间戳" class="headerlink" title="时间戳"></a>时间戳</h3><p>对系统中每个事务，我们使用唯一固定的时间戳与其联系起来，时间戳记为$TS(T_i)$，时间戳是事务开始执行前DBS赋予的。后来的新事务的时间戳大于先前的事务。时间戳可有两种方法实现：</p>
+<ul>
+<li>系统时钟</li>
+<li>逻辑计数器</li>
+</ul>
+<p>每个数据项需要与两个时间戳值相关联：</p>
+<ul>
+<li><strong>W-timestamp(Q)</strong> ：表示<strong>成功</strong>执行<strong>write(Q)</strong> 的<strong>所有</strong>事务的最大时间戳</li>
+<li><strong>R-timestamp(Q)</strong> ：表示<strong>成功</strong>执行<strong>read(Q)</strong> 的<strong>所有</strong>事务的最大时间戳</li>
+</ul>
+<p>时间戳排序协议：一种保证任何有冲突的read或write操作按时间戳顺序执行，保证无死锁，但可能会导致长事务饿死。</p>
+<ol>
+<li>假设事务$T_i$发出read(Q):<ol>
+<li>$TS(T_i)&lt;$W-timestamp(Q)，意味着这个事务开始的早，还没读呢就有人又给写了点东西覆盖了Q，则$T_i$读入值会被覆盖，回滚。</li>
+<li>$TS(T_i)\geq$W-timestamp(Q)，成功。R-timestamp被置为$TS(T_i)$和R-timestamp之中最大值。</li>
+</ol>
+</li>
+<li>假设事务$T_i$发出write(Q):<ol>
+<li>$TS(T_i)&lt;$R-timestamp，意味着这个写事务开始的早，但是还没写完呢，就有人读了。所以$T_i$产生值Q是先前需要值，回滚。</li>
+<li>$TS(T_i)&lt;$W-timestamp，意味着这个事务开始的早，还没写完提交呢，又有人提交了个写，$T_i$写入值Q已过时，回滚。</li>
+<li>其他情况，设置W-timestamp等于$TS(T_i)$</li>
+</ol>
+</li>
+</ol>
+<h3 id="基于有效性检查"><a href="#基于有效性检查" class="headerlink" title="基于有效性检查"></a>基于有效性检查</h3><p>有效性检查协议要求每个事务$T_i$在其生命周期中按两个或三个阶段执行，这取决于该事务是一个只读事务还是一个更新事务。</p>
+<ol>
+<li>读阶段：在这一阶段，数据项会被读入并保存在$T_i$的局部变量之中，不会对数据库进行真正的更新。</li>
+<li>有效性检查阶段：对事务$T_i$进行有效性测试。判定是否可以执行write操作而不违反可串行性。如果事务有效性测试失败，系统会终止这个事务。</li>
+<li>写阶段：如果通过了有效性检查，会将局部变量更新到数据库中。（只读无此阶段）</li>
+</ol>
+<p>调度器会维护三个事务集合：</p>
+<ol>
+<li>START集合：已开始但尚未有效性确认的事务集合</li>
+<li>VAL集合：已确认但未写的事务集合</li>
+<li>FIN集合：已完成第三个阶段写的事物的集合</li>
+</ol>
+<p>事务$T_i$的有效性测试要求任何满足$TS(T_k)&lt;TS(T_i)$的事务$T_k$必须满足下面两个条件之一：</p>
+<ol>
+<li>Finish（$T_k$）&lt; Start($T_i$)。即$T_k$在$T_i$开始之前完成。</li>
+<li>$T_k$所写的数据与$T_i$所读的数据不相交，并且$T_k$的写阶段在$T_i$开始有效性检查之前完成。</li>
+</ol>
+<p>有效性检查机制可以自动预防级联回滚，但有可能长事务会饿死。</p>
+<p>有效性检查机制事务乐观的执行，假定能够完成并且最终有效，因此也称<strong>乐观并发控制</strong>，而时间戳和加锁是悲观的，检测到冲突时，强迫等待或是回滚。</p>
+<h2 id="恢复系统"><a href="#恢复系统" class="headerlink" title="恢复系统"></a>恢复系统</h2><p>我们把存储系统分为内存和非易失性存储区。数据库的大部分内容存在于非易失性存储器中，在特定时刻，只有少量的数据存在于主存中。</p>
+<p>每个事务$T_i$都有他自己的私有工作区，用于保存$T_i$所访问及更新的所有数据项的拷贝。该工作区在$T_i$初始化时由系统创建；在$T_i$提交或中止时由系统删除。</p>
+<p>在事务提交之后，它所执行的更新并不一定会马上存储在非易失性存储器中，而是采取延迟写的方法，进行批量写入。所以在这期间，有可能出现系统崩溃等情况，导致更新提交之后却未写入非易失性存储器。</p>
+<h3 id="日志"><a href="#日志" class="headerlink" title="日志"></a>日志</h3><p>为了避免这种情况，多数的数据库系统采用了<strong>日志</strong>方式，用于保证事务的原子性，要么全部发生，要么不发生。</p>
+<p>一条日志&lt;$T_i, X_j, V_1, V_2$&gt; 包括了以下几个部分：</p>
+<ol>
+<li>事务标识：是执行事务操作的唯一标识。</li>
+<li>数据项标识：指明了所操作的数据项。</li>
+<li>旧值：写前值。</li>
+<li>新值：写后值。</li>
+</ol>
+<h3 id="恢复算法"><a href="#恢复算法" class="headerlink" title="恢复算法"></a>恢复算法</h3><p>恢复算法需要考虑两种情况：</p>
+<ul>
+<li>提交后修改没能更新到非易失性存储器中。</li>
+<li>修改已经更新到非易失性存储器了，但由于故障，这个事务需要中止。</li>
+</ul>
+<p>恢复算法需要防止级联情况的出现，所以需要使用<strong>严格两阶段锁</strong>来实现。</p>
+<p>一个事务的commit日志记录输出到稳定存储器后，我们就说这个事务<strong>提交</strong>了。</p>
+<p>恢复系统应该包括两种功能：</p>
+<ul>
+<li>undo($T_i$)撤销</li>
+<li>redo($T_i$)重做</li>
+</ul>
+<p>这两种功能需要系统从尾端反向扫描日志来执行回滚。</p>
+<ul>
+<li>如果日志包括&lt;$T_i$start&gt;，但既不包括&lt;$T_i$commit&gt;也不包括&lt;$T_i$abort&gt;，则需要对事务$T_i$进行撤销。</li>
+<li>如果日志包括&lt;$T_i$start&gt;，以及&lt;$T_i$commit&gt;或&lt;$T_i$abort&gt;，则需要对事务$T_i$进行重做。事务即使abort了也需要重做是因为，日志中包括了原本abort之后的操作，而我们又是顺序执行，所以简单重放即可（会包含一定冗余，但简化了形式）。</li>
+</ul>
+<h3 id="检查点"><a href="#检查点" class="headerlink" title="检查点"></a>检查点</h3><p>如果系统故障，我们需要从头进行整个日志，则需要耗费大量的时间。所以引入了检查点概念。</p>
+<p>检查点：</p>
+<ol>
+<li>在执行检查点操作过程中，不允许任何更新</li>
+<li>在执行检查点的过程中，将所有更新过的缓冲块都输出到磁盘。</li>
+</ol>
+<p>检查点的执行过程如下：</p>
+<ol>
+<li>将当前主存中的日志记录输出到稳定存储器</li>
+<li>将所有修改的缓冲块输出到磁盘。</li>
+<li>将一个日志记录$\text{<checkpoint L>}$输出到稳定存储器。</li>
+</ol>
+<p>之后，如果系统崩溃了，只需要反向搜索找到最后一个$\text{<checkpoint L>}$，并对在检查点之前开始，但未&lt;commit&gt;或是&lt;abort&gt;的事务（这些事务还未完成，不会更新到持久性设备），或是检查点写到日志之后开始的事务，执行以下操作：</p>
+<ul>
+<li>并且在日志之中没有执行&lt;commit&gt;或是&lt;abort&gt;的事务进行撤销</li>
+<li>对在检查点写到日志之后开始的事务，并且在日志之中有执行&lt;commit&gt;或是&lt;abort&gt;的事务进行重做</li>
+</ul>
 
       
     </div>

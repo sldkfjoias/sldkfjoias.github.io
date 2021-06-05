@@ -172,7 +172,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">28</span>
+          <span class="site-state-item-count">27</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -277,79 +277,6 @@
 <li><a target="_blank" rel="noopener" href="https://blog.csdn.net/u012308586/article/details/90751116">__attribute__ ((__packed__))关键字</a></li>
 </ol>
 
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://sldkfjoias.github.io/2021/05/25/setUIDfilter/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="张石">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="YeeHHa">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/05/25/setUIDfilter/" class="post-title-link" itemprop="url">创建进程时setUID的过滤机制</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2021-05-25 14:13:47 / 修改时间：15:18:54" itemprop="dateCreated datePublished" datetime="2021-05-25T14:13:47+08:00">2021-05-25</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>上次记录到了<code>frameworks/base/core/jni/com_android_internal_os_Zygote.cpp</code>文件中的<code>SpecializeCommon</code>函数，这个函数会对zygote新fork出来的进程进行一些特化，我关心的就是<code>setresuid(uid, uid, uid)</code>这个函数。不过之前也记录了，并不是只有app启动是通过zygote进行fork出来的，许多系统进程也是通过同样的方式fork的，所以如果想进行权限判断就需要对UID进行一定的规则过滤。</p>
-<p>在<code>setresuid</code>之前，有一个<code>SetUpSeccompFilter(uid, is_child_zygote);</code>这个看起来很像是安卓自身进行规则过滤使用的。他的注释如下：</p>
-<blockquote>
-<p>Must be called when the new process still has CAP_SYS_ADMIN, in this case, before changing uid from 0, which clears capabilities.  The other alternative is to call prctl(PR_SET_NO_NEW_PRIVS, 1) afterward, but that breaks SELinux domain transition (see b/71859146).  As the result, privileged syscalls used below still need to be accessible in app process.</p>
-</blockquote>
-<p>然后记录一下这个<code>SetUpSeccompFilter(uid, is_child_zygote)</code>函数定义：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">SetUpSeccompFilter</span><span class="params">(<span class="keyword">uid_t</span> uid, <span class="keyword">bool</span> is_child_zygote)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (!gIsSecurityEnforced) &#123;</span><br><span class="line">    <span class="built_in">ALOGI</span>(<span class="string">&quot;seccomp disabled by setenforce 0&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Apply system or app filter based on uid.</span></span><br><span class="line">  <span class="keyword">if</span> (uid &gt;= AID_APP_START) &#123;</span><br><span class="line">    <span class="keyword">if</span> (is_child_zygote) &#123;</span><br><span class="line">      <span class="built_in">set_app_zygote_seccomp_filter</span>();</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="built_in">set_app_seccomp_filter</span>();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="built_in">set_system_seccomp_filter</span>();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>由此看来，<code>uid &gt;= AID_APP_START</code>的应该就是用户启动的进程。这规则还挺简单的….然后关于<code>AID_APP_START</code>这几个宏是这样的：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> AID_APP 10000       <span class="comment">/* <span class="doctag">TODO:</span> switch users over to AID_APP_START */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> AID_APP_START 10000 <span class="comment">/* first app user */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> AID_APP_END 19999   <span class="comment">/* last app user */</span></span></span><br></pre></td></tr></table></figure>
       
     </div>
 
@@ -1331,6 +1258,135 @@
 <td>异步IO</td>
 <td>内核执行读写操作并触发读写完成事件</td>
 <td>程序没有阻塞阶段</td>
+</tr>
+</tbody></table>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ol>
+<li>《Linux高性能服务器编程》</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://sldkfjoias.github.io/2021/04/07/IO%E5%A4%8D%E7%94%A8%E5%87%BD%E6%95%B0%E6%AF%94%E8%BE%83/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="张石">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YeeHHa">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/04/07/IO%E5%A4%8D%E7%94%A8%E5%87%BD%E6%95%B0%E6%AF%94%E8%BE%83/" class="post-title-link" itemprop="url">I/O复用函数的比较</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-04-07 20:15:23" itemprop="dateCreated datePublished" datetime="2021-04-07T20:15:23+08:00">2021-04-07</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-05-18 20:28:30" itemprop="dateModified" datetime="2021-05-18T20:28:30+08:00">2021-05-18</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="三种IO复用函数的比较"><a href="#三种IO复用函数的比较" class="headerlink" title="三种IO复用函数的比较"></a>三种IO复用函数的比较</h1><p>select、poll和epoll三组IO复用系统调用都能同时监听多个文件描述符。它们会等待timeout指定的超过时间，直到一个或者多个文件描述符上有事件发生时返回，<strong>返回值是就绪的文件描述符的数量。</strong>返回0表示每有事件发生。</p>
+<p>三个函数都通过某种结构体变量来高速内核监听那些文件描述符上的事件，并使用该结构体来获取内核处理的结果。</p>
+<h2 id="select"><a href="#select" class="headerlink" title="select"></a>select</h2><p>参数类型<code>fd_set</code>没有将文件描述符和事件绑定，它仅仅是一个文件描述符的集合，因此select需要提供3个这种类型的参数来分别传入和输出可读可写及异常事件，这一方面使得select不能处理更多类型的事件，另一方面由于内核对<code>fd_set</code>集合的在线修改，应用程序下次调用select前不得不重置这三个<code>fd_set</code>集合。</p>
+<p>select存在允许监听的最大文件描述符数量上限，虽然可修改，但是可能会导致未定义行为出现。</p>
+<h2 id="poll"><a href="#poll" class="headerlink" title="poll"></a>poll</h2><p>poll的参数类型pollfd把文件描述符和事件都定义其中，任何事件都被统一处理，使编程接口简洁的多。并且内核每次修改的都是<code>pollfd</code>结构体的revents成员，而events成员保持不变，因此下次调用poll时应用程序无需重置pollfd类型的事件集参数。</p>
+<p>poll使用nfds参数指定最多监听的文件描述符和事件，可以达到系统允许打开的最大文件描述符数目——65535</p>
+<hr>
+<h3 id="select和poll相对来说更为相似"><a href="#select和poll相对来说更为相似" class="headerlink" title="select和poll相对来说更为相似"></a>select和poll相对来说更为相似</h3><p>由于每次select和poll调用都返回整个用户注册的事件集合，所以应用程序索引就绪文件描述符的时间复杂度O(n)。同时，二者只能工作在相对低效的LT模式</p>
+<h2 id="epoll"><a href="#epoll" class="headerlink" title="epoll"></a>epoll</h2><ul>
+<li>epoll在内核中维护了一个事件表，并提供了一个独立的系统调用<code>epoll_ctl</code>来控制往其中添加、删除、修改事件。这样，每次<code>epoll_wait</code>调用都直接从该内核事件表取得用户注册的事件，从而无需反复从用户空间读入这些事件。</li>
+<li>epoll_wait系统调用的events参数仅仅用来返回就绪的事件，这使得应用程序索引就绪文件描述符的时间复杂度达到O(1)。</li>
+<li>并且可以工作在高效的ET模式，并且可以设置EPOLLONESHOT来进一步减少事件触发次数</li>
+<li>epoll_wait使用maxevents参数指定最多监听的文件描述符和事件，可以达到系统允许打开的最大文件描述符数目——65535</li>
+<li>epoll_wait使用回调方式，内核检测到就绪的文件描述符时，触发回调函数，将文件描述符对应的事件插入内核就绪事件队列，最后在适当时机将就绪事件队列拷贝到用户空间。因此无需轮询</li>
+<li><strong>注意！</strong> 当活动连接比较多时，epoll_wait效率未必比select和poll高，因为此时回调函数会被触发的过于频繁。<strong>所以epoll_wait适用于连接数量多，但活动连接较少的情况</strong></li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><table>
+<thead>
+<tr>
+<th>系统调用</th>
+<th>select</th>
+<th>poll</th>
+<th>epoll</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>事件集合</td>
+<td>用户通过3个参数传入感兴趣的可读可写、异常事件，内核通过对这些参数在线修改来反馈其中就绪事件，用户每次调用select都要重置3个参数</td>
+<td>统一处理所有事件类型，因此只有一个事件集参数。用户通过pollfd.events传入感兴趣事件，内核通过修改pollfd.revents反馈其中就绪的事件</td>
+<td>内核通过一个事件表直接管理用户感兴趣的所有事件。因此用户无需反复传入所有感兴趣的事件。epoll_wait系统调用的参数events仅用于反馈就绪的事件。</td>
+</tr>
+<tr>
+<td>应用程序索引就绪文件描述符的时间复杂度</td>
+<td>O(n)</td>
+<td>O(n)</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>最大支持文件描述符数</td>
+<td>存在上限</td>
+<td>65535</td>
+<td>65535</td>
+</tr>
+<tr>
+<td>工作模式</td>
+<td>LT</td>
+<td>LT</td>
+<td>支持高效ET</td>
+</tr>
+<tr>
+<td>内核实现和工作效率</td>
+<td>轮询方式检测O(n)</td>
+<td>轮询方式检测O(n)</td>
+<td>采用回调方式检测就绪事件，O(1)</td>
 </tr>
 </tbody></table>
 <h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ol>
